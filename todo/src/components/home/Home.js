@@ -7,7 +7,9 @@ const Home = () => {
         <div className="container my-2">
             <h3 className="text-center">Todo App</h3>
             <Form />
-            <Card />
+            <div className="row my-3">
+                <Card />
+            </div>
         </div>
     )
 }
