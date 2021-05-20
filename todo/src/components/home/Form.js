@@ -12,6 +12,7 @@ const Form = () => {
         e.preventDefault()
         dispatch(addTodo({ id: cuid(), title: title, desc: desc }))
         document.getElementById("myForm").reset();
+        document.getElementById("title").focus()
     }
 
     return (

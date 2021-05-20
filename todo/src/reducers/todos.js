@@ -15,13 +15,13 @@ const todos = (state = initialState, action) => {
                 ...state,
                 data: [...state.data.filter((todo) => todo.id !== action.id)],
             };
-        // case "UPDATE_TODO":
-        //     return {
-        //         ...state,
-        //         data: [...state.data.filter((todo) => todo.id !== action.id),
-        //         { task: action.message, id: action.id },
-        //         ],
-        //     };
+        case "UPDATE_TODO":
+            return {
+                ...state,
+                data: [...state.data.filter((todo) => todo.id !== action.id),
+                { id: action.id, title: action.title, desc: action.desc },
+                ],
+            };
         default:
             return state
     }
