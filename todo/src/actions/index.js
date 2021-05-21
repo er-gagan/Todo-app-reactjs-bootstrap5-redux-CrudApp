@@ -10,9 +10,11 @@ export const deleteTodo = (id) => ({
     id,
 });
 
-export const updateTodo = ({ id, title, desc }) => ({
+export const updateTodo = ({ id, title, desc, date, time }) => ({
     type: UPDATE_TODO,
     id,
     title,
     desc,
+    date,
+    time,
 });

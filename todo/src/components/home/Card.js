@@ -1,25 +1,30 @@
 import React, { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { deleteTodo, updateTodo } from '../../actions';
+import { setDatefun, setTimefun } from './setDateTimeModule.js'
 
 const Card = () => {
     const [id, setId] = useState('')
     const [title, setTitle] = useState('')
     const [desc, setDesc] = useState('')
+    const [date, setDate] = useState('')
+    const [time, setTime] = useState('')
 
     const todos = useSelector((state) => state.todos.data);
     const dispatch = useDispatch()
 
-    const openbtn = (id, title, desc) => {
+    const openbtn = (id, title, desc, date, time) => {
         setId(id)
         setTitle(title)
         setDesc(desc)
+        setDate(date)
+        setTime(time)
     }
 
     const todoUpdate = () => {
         let newTitle = document.getElementById("editTitle").value
         let newDesc = document.getElementById("editDesc").value
-        dispatch(updateTodo({ id: id, title: newTitle, desc: newDesc }))
+        dispatch(updateTodo({ id: id, title: newTitle, desc: newDesc, date: setDatefun(), time: setTimefun() }))
     }
 
     if (todos.length) {
@@ -42,6 +47,8 @@ const Card = () => {
                                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div className="modal-body">
+                                            <h4 className="form-label">{date}</h4>
+                                            <h6 className="form-label">{time}</h6>
                                             <div className="mb-3">
                                                 <label htmlFor="editTitle" className="form-label">Title</label>
                                                 <input type="text" onChange={(e) => setTitle(e.target.value)} className="form-control" id="editTitle" value={title} />
@@ -62,7 +69,7 @@ const Card = () => {
                             {/* Modal for open button end */}
 
                             <div className="text-center">
-                                <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" className="btn btn-info btn-sm" onClick={() => openbtn(item.id, item.title, item.desc)}>Open</button>
+                                <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" className="btn btn-info btn-sm" onClick={() => openbtn(item.id, item.title, item.desc, item.date, item.time)}>Open</button>
 
                                 <button className="btn btn-warning btn-sm mx-3" onClick={() => dispatch(deleteTodo(item.id))}>Delete</button>
                             </div>
