@@ -1,5 +1,15 @@
-const setTimefun = () => {
+const setDatefun = () => {
     let d = new Date();
+    let hours = d.getHours();
+    let minutes = d.getMinutes();
+    let seconds = d.getSeconds();
+    let dd = d.getDate();
+    let mm = d.getMonth(); //January is 0!
+    let yyyy = d.getFullYear();
+    return ({ yyyy, mm, dd, hours, minutes, seconds });
+}
+
+const setTimefun = (d) => {
     let hours = d.getHours();
     let minutes = d.getMinutes();
     let seconds = d.getSeconds();
@@ -22,8 +32,7 @@ const setTimefun = () => {
     return strTime
 }
 
-const setDatefun = () => {
-    let d = new Date();
+const Datefun = (d) => {
     let dd = String(d.getDate()).padStart(2, '0');
     let mm = String(d.getMonth() + 1).padStart(2, '0'); //January is 0!
     let yyyy = d.getFullYear();
@@ -32,4 +41,4 @@ const setDatefun = () => {
     return date
 }
 
-export {setDatefun, setTimefun}
+export { setDatefun, setTimefun, Datefun }

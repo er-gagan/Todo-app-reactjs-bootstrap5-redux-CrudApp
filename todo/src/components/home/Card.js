@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { deleteTodo, updateTodo } from '../../actions';
-import { setDatefun, setTimefun } from './setDateTimeModule.js'
+import { setDatefun, setTimefun, Datefun } from './setDateTimeModule.js'
 
 const Card = () => {
     const [id, setId] = useState('')
@@ -13,22 +13,24 @@ const Card = () => {
     const todos = useSelector((state) => state.todos.data);
     const dispatch = useDispatch()
 
-    const openbtn = (id, title, desc, date, time) => {
+    const openbtn = (id, title, desc, date) => {
         setId(id)
         setTitle(title)
         setDesc(desc)
-        setDate(date)
-        setTime(time)
+        setDate(Datefun(date))
+        setTime(setTimefun(date))
     }
 
     const todoUpdate = () => {
         let newTitle = document.getElementById("editTitle").value
         let newDesc = document.getElementById("editDesc").value
-        dispatch(updateTodo({ id: id, title: newTitle, desc: newDesc, date: setDatefun(), time: setTimefun() }))
+        let dateObj = setDatefun()
+        dispatch(updateTodo({ id: id, title: newTitle, desc: newDesc, date: new Date(dateObj.yyyy, dateObj.mm, dateObj.dd, dateObj.hours, dateObj.minutes, dateObj.seconds) }))
     }
 
     if (todos.length) {
-        const taskItems = todos.map((item) => {
+        const mySortedTodos = todos.slice().sort((a, b) => b.date - a.date) // sort todos date wise
+        const taskItems = mySortedTodos.map((item) => {
             return (
                 <div key={item.id} className="col-md-3">
                     <div className="card my-2 shadow bg-body rounded" style={{ width: "16rem" }}>
@@ -43,12 +45,12 @@ const Card = () => {
                                 <div className="modal-dialog">
                                     <div className="modal-content">
                                         <div className="modal-header">
-                                            <h5 className="modal-title" id="exampleModalLabel">Edit Todo</h5>
+                                            <span className="modal-title h4" id="exampleModalLabel">Edit Todo&nbsp;</span>
+                                            <span className="modal-title h5">{date}&nbsp;</span>
+                                            <span className="modal-title h5">{time}</span>
                                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div className="modal-body">
-                                            <h4 className="form-label">{date}</h4>
-                                            <h6 className="form-label">{time}</h6>
                                             <div className="mb-3">
                                                 <label htmlFor="editTitle" className="form-label">Title</label>
                                                 <input type="text" onChange={(e) => setTitle(e.target.value)} className="form-control" id="editTitle" value={title} />
@@ -69,7 +71,7 @@ const Card = () => {
                             {/* Modal for open button end */}
 
                             <div className="text-center">
-                                <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" className="btn btn-info btn-sm" onClick={() => openbtn(item.id, item.title, item.desc, item.date, item.time)}>Open</button>
+                                <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" className="btn btn-info btn-sm" onClick={() => openbtn(item.id, item.title, item.desc, item.date)}>Open</button>
 
                                 <button className="btn btn-warning btn-sm mx-3" onClick={() => dispatch(deleteTodo(item.id))}>Delete</button>
                             </div>
