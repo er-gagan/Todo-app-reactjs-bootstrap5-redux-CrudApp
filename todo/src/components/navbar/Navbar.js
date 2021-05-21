@@ -1,5 +1,5 @@
 import React from 'react'
-
+import userImage from './user.png'
 const Navbar = () => {
     return (
         <div>
@@ -32,10 +32,16 @@ const Navbar = () => {
                                 <a className="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
                             </li> */}
                         </ul>
-                        <form className="d-flex">
-                            <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-                            <button className="btn btn-outline-success" type="submit">Search</button>
-                        </form>
+                        <div className="btn-group">
+                            <a href="/" className="dropdown" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                                <img style={{ width: "40px", border: "2px solid white", borderRadius: "50%", backgroundColor: "white" }} src={userImage} alt="NoImage" />
+                            </a>
+                            <ul className="dropdown-menu dropdown-menu-lg-end dropdown-menu-dark">
+                                <li><button className="dropdown-item" type="button">Signup</button></li>
+                                <li><button className="dropdown-item" type="button">Login</button></li>
+                                <li><button className="dropdown-item" type="button">Forgot Password</button></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </nav>
