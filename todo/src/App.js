@@ -2,14 +2,20 @@
 // import './App.css';
 import Navbar from './components/navbar/Navbar';
 // import Home from './components/home/Home';
-import Signup from './components/Signup/Signup';
+// import Login from './components/Login/Login';
+// import Signup from './components/Signup/Signup';
+// import ChangePassword from './components/ChangePassword/ChangePassword';
+import ForgotPassword from './components/ForgotPassword/ForgotPassword';
 
 function App() {
   return (
     <div>
       <Navbar />
       {/* <Home /> */}
-      <Signup />
+      {/* <Login /> */}
+      {/* <Signup /> */}
+      {/* <ChangePassword /> */}
+      <ForgotPassword />
     </div>
   );
 }

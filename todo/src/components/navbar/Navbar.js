@@ -37,8 +37,9 @@ const Navbar = () => {
                                 <img style={{ width: "40px", border: "2px solid white", borderRadius: "50%", backgroundColor: "white" }} src={userImage} alt="NoImage" />
                             </a>
                             <ul className="dropdown-menu dropdown-menu-lg-end dropdown-menu-dark">
-                                <li><button className="dropdown-item" type="button">Signup</button></li>
                                 <li><button className="dropdown-item" type="button">Login</button></li>
+                                <li><button className="dropdown-item" type="button">Signup</button></li>
+                                <li><button className="dropdown-item" type="button">Change Password</button></li>
                                 <li><button className="dropdown-item" type="button">Forgot Password</button></li>
                             </ul>
                         </div>
