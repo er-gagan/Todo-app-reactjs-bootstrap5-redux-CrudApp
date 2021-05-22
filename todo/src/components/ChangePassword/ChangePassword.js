@@ -30,7 +30,7 @@ const ChangePassword = () => {
                     <input required type="password" className="form-control" id="newPass2" placeholder="Re-type new password" onChange={(e) => setNewConfirmPassword(e.target.value)} value={newConfirmPassword} />
                 </div>
                 <div className="text-center">
-                    <input type="submit" value="Submit" className="btn btn-danger" />
+                    <input type="submit" value="Submit" className="btn btn-danger btn-sm w-25" />
                 </div>
             </form>
         </div>

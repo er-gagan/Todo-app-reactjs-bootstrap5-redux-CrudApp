@@ -22,7 +22,7 @@ const Login = () => {
                 </div>
             </form>
             <div className="text-center">
-                <input type="submit" value="Submit" className="btn btn-danger" />
+                <input type="submit" value="Submit" className="btn btn-danger btn-sm w-25" />
             </div>
         </div>
     )
