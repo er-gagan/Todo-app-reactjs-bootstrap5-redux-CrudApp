@@ -33,7 +33,7 @@ const MaxCharactersAllowed = (e, nameMsg, MaxVal) => {
     nameMsg.innerText = `** Maximum ${MaxVal} characters allowed`
 }
 
-const somethingWentWrong = (e,nameMsg) => {
+const somethingWentWrong = (e, nameMsg) => {
     e.target.classList.add('is-invalid');
     e.target.classList.remove('is-valid');
     nameMsg.classList.add("invalid-feedback");
@@ -44,15 +44,19 @@ const somethingWentWrong = (e,nameMsg) => {
 const checkLength = (Value, MinVal, MaxVal, e, nameMsg) => {
     if (Value.length < MinVal) {
         MinCharactersAllowed(e, nameMsg, MinVal)
+        return(false)
     }
     else if (Value.length >= MinVal && Value.length <= MaxVal) {
         correctCharacters(e, nameMsg)
+        return(true)
     }
     else if (Value.length > MaxVal) {
         MaxCharactersAllowed(e, nameMsg, MaxVal)
+        return(false)
     }
     else {
-        somethingWentWrong(e,nameMsg)
+        somethingWentWrong(e, nameMsg)
+        return(false)
     }
 }
 
@@ -64,6 +68,14 @@ const undefinedValueLength = (e, nameMsg) => {
     nameMsg.innerText = ""
 }
 
+const InvallidEmailValue = (e, emailMsg) => {
+    e.target.classList.add('is-invalid');
+    e.target.classList.remove('is-valid');
+    emailMsg.classList.add("invalid-feedback");
+    emailMsg.classList.remove("valid-feedback");
+    emailMsg.innerText = "** Email is invallid"
+}
+
 const checkPassword = (password, confirmPassword) => {
     if ((password === confirmPassword) && (password.length !== 0)) {
         return true
@@ -73,4 +85,4 @@ const checkPassword = (password, confirmPassword) => {
     }
 }
 
-export { checkPassword, checkFieldCharacters, checkLength, undefinedValueLength }
+export { checkPassword, checkFieldCharacters, checkLength, undefinedValueLength, InvallidEmailValue, correctCharacters }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { checkPassword, checkFieldCharacters, checkLength, undefinedValueLength } from './SignupFormValidation'
+import { checkPassword, checkFieldCharacters, checkLength, undefinedValueLength, InvallidEmailValue, correctCharacters } from './SignupFormValidation'
 
 const Signup = () => {
     const [name, setName] = useState('')
@@ -9,6 +9,24 @@ const Signup = () => {
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [gender, setGender] = useState('')
+    // state for submit button validation start
+    const [nameValidate, setNameValidate] = useState(false)
+    const [usernameValidate, setUsernameValidate] = useState(false)
+    const [phoneValidate, setPhoneValidate] = useState(false)
+    const [emailValidate, setEmailValidate] = useState(false)
+    const [passwordValidate, setPasswordValidate] = useState(false)
+    const [confirmPasswordValidate, setConfirmPasswordValidate] = useState(false)
+    const [genderValidate, setGenderValidate] = useState(false)
+    // state for submit button validation end
+
+    const checkButtonValidation = () => {
+        if (nameValidate && usernameValidate && phoneValidate && emailValidate && passwordValidate && confirmPasswordValidate && genderValidate) {
+            document.getElementById('submitBtn').disabled = false
+        }
+        else {
+            document.getElementById('submitBtn').disabled = true
+        }
+    }
 
     const nameValidation = (e) => {
         let Value = e.target.value
@@ -18,13 +36,18 @@ const Signup = () => {
         Value = checkFieldCharacters(Value, regex)
         if (Value !== undefined) {
             setName(Value)
-            checkLength(Value, 5, 30, e, nameMsg)   // Value, MinValue, MaxValue, event, nameMsg
+            if (checkLength(Value, 5, 30, e, nameMsg)) {   // Value, MinValue, MaxValue, event, nameMsg
+                setNameValidate(true)
+            }
+            else {
+                setNameValidate(false)
+            }
         }
         else {
             undefinedValueLength(e, nameMsg)
         }
+        checkButtonValidation()
     }
-
     const usernameValidation = (e) => {
         let Value = e.target.value
         setUsername(Value)
@@ -33,11 +56,45 @@ const Signup = () => {
         Value = checkFieldCharacters(Value, regex)
         if (Value !== undefined) {
             setUsername(Value)
-            checkLength(Value, 5, 15, e, usernameMsg)   // Value, MinValue, MaxValue, event, usernameMsg
+            if (checkLength(Value, 5, 15, e, usernameMsg)) {   // Value, MinValue, MaxValue, event, usernameMsg
+                setUsernameValidate(true)
+            }
+            else {
+                setUsernameValidate(false)
+            }
         }
         else {
             undefinedValueLength(e, usernameMsg)
         }
+        checkButtonValidation()
+    }
+
+    const emailValidation = (e) => {
+        let Value = e.target.value
+        setEmail(Value)
+        let regex = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/gi
+        let emailMsg = document.getElementById("emailMsg")
+        if (Value) {
+            if (Value.match(regex) !== null) {
+                Value = Value.match(regex).join("")
+                setEmail(Value)
+                if (checkLength(Value, 10, 40, e, emailMsg)) {
+                    setEmailValidate(true)
+                }
+                else {
+                    setEmailValidate(false)
+                }
+            }
+            else {
+                setEmail(Value)
+                InvallidEmailValue(e, emailMsg)
+                setEmailValidate(false)
+            }
+        }
+        else {
+            undefinedValueLength(e, emailMsg)
+        }
+        checkButtonValidation()
     }
 
     const phoneValidation = (e) => {
@@ -48,11 +105,17 @@ const Signup = () => {
         Value = checkFieldCharacters(Value, regex)
         if (Value !== undefined) {
             setPhone(Value)
-            checkLength(Value, 10, 10, e, phoneMsg)   // Value, MinValue, MaxValue, event, phoneMsg
+            if (checkLength(Value, 10, 10, e, phoneMsg)) {   // Value, MinValue, MaxValue, event, phoneMsg
+                setPhoneValidate(true)
+            }
+            else {
+                setPhoneValidate(false)
+            }
         }
         else {
             undefinedValueLength(e, phoneMsg)
         }
+        checkButtonValidation()
     }
 
     const passwordValidation = (e) => {
@@ -63,11 +126,17 @@ const Signup = () => {
         Value = checkFieldCharacters(Value, regex)
         if (Value !== undefined) {
             setPassword(Value)
-            checkLength(Value, 6, 15, e, passwordMsg)   // Value, MinValue, MaxValue, event, passwordMsg
+            if (checkLength(Value, 6, 15, e, passwordMsg)) {   // Value, MinValue, MaxValue, event, passwordMsg
+                setPasswordValidate(true)
+            }
+            else {
+                setPasswordValidate(false)
+            }
         }
         else {
             undefinedValueLength(e, passwordMsg)
         }
+        checkButtonValidation()
     }
 
     const confirmPasswordValidation = (e) => {
@@ -78,26 +147,24 @@ const Signup = () => {
         Value = checkFieldCharacters(Value, regex)
         if (Value !== undefined) {
             setConfirmPassword(Value)
-            checkLength(Value, 6, 15, e, confirmPasswordMsg)   // Value, MinValue, MaxValue, event, confirmPasswordMsg
+            if (checkLength(Value, 6, 15, e, confirmPasswordMsg)) {   // Value, MinValue, MaxValue, event, confirmPasswordMsg
+                setConfirmPasswordValidate(true)
+            }
+            else {
+                setConfirmPasswordValidate(false)
+            }
         }
         else {
             undefinedValueLength(e, confirmPasswordMsg)
         }
+        checkButtonValidation()
     }
 
-    const emailValidation = (e) => {
-        let Value = e.target.value
-        setEmail(Value)
-        let regex = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/gi
-        let emailMsg = document.getElementById("emailMsg")
-        if (Value.match(regex) !== null) {
-            Value = Value.match(regex).join("")
-            setEmail(Value)
-            checkLength(Value, 10, 40, e, emailMsg)   // Value, MinValue, MaxValue, event, emailMsg
-        }
-        else {
-            setEmail(Value)
-        }
+    const genderValidation = (e) => {
+        setGender(e.target.value)
+        let genderMsg = document.getElementById("genderMsg")
+        correctCharacters(e, genderMsg)
+        setGenderValidate(true)
     }
 
     const submitForm = (e) => {
@@ -166,16 +233,17 @@ const Signup = () => {
                 {/* Gender */}
                 <div className="mb-3">
                     <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="Gender" className="form-label">Gender</label>
-                    <select id="Gender" className="form-select" onChange={(e) => setGender(e.target.value)}>
+                    <select id="Gender" className="form-select" onChange={(e) => genderValidation(e)}>
                         <option hidden>Please select your gender</option>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
                         <option value="Others">Others</option>
                     </select>
+                    <div id="genderMsg"></div>
                 </div>
 
                 <div className="text-center">
-                    <input type="submit" value="Submit" className="btn btn-danger btn-sm w-25" />
+                    <input type="submit" value="Submit" id="submitBtn" className="btn btn-danger btn-sm w-25" />
                 </div>
             </form>
         </div>
