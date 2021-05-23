@@ -76,6 +76,14 @@ const InvallidEmailValue = (e, emailMsg) => {
     emailMsg.innerText = "** Email is invallid"
 }
 
+const MainFieldValidationCheck = (e, nameMsg, msg) => {
+    e.target.classList.add('is-invalid');
+    e.target.classList.remove('is-valid');
+    nameMsg.classList.add("invalid-feedback");
+    nameMsg.classList.remove("valid-feedback");
+    nameMsg.innerText = msg
+}
+
 const checkPassword = (password, confirmPassword) => {
     if ((password === confirmPassword) && (password.length !== 0)) {
         return true
@@ -85,4 +93,24 @@ const checkPassword = (password, confirmPassword) => {
     }
 }
 
-export { checkPassword, checkFieldCharacters, checkLength, undefinedValueLength, InvallidEmailValue, correctCharacters }
+const matchPasswordValid = (matchPassword, pass1, pass2) => {
+    matchPassword.classList.remove("valid-feedback");
+    matchPassword.classList.remove("invalid-feedback");
+    pass1.classList.remove('is-invalid');
+    pass1.classList.add('is-valid');
+    pass2.classList.remove('is-invalid');
+    pass2.classList.add('is-valid');
+    matchPassword.innerText = ""
+}
+
+const matchPasswordInvalid = (matchPassword, pass1, pass2) => {
+    matchPassword.classList.remove("valid-feedback");
+    matchPassword.classList.add("invalid-feedback");
+    pass1.classList.add('is-invalid');
+    pass1.classList.remove('is-valid');
+    pass2.classList.add('is-invalid');
+    pass2.classList.remove('is-valid');
+    matchPassword.innerText = "** Password doesn't match"
+}
+
+export { checkPassword, checkFieldCharacters, checkLength, undefinedValueLength, InvallidEmailValue, correctCharacters, MainFieldValidationCheck, matchPasswordValid, matchPasswordInvalid }

@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { checkPassword, checkFieldCharacters, checkLength, undefinedValueLength, InvallidEmailValue, correctCharacters } from './SignupFormValidation'
+import React, { useState, useEffect } from 'react'
+import { checkPassword, checkFieldCharacters, checkLength, undefinedValueLength, InvallidEmailValue, correctCharacters, MainFieldValidationCheck, matchPasswordValid, matchPasswordInvalid } from './SignupFormValidation'
 
 const Signup = () => {
     const [name, setName] = useState('')
@@ -17,16 +17,25 @@ const Signup = () => {
     const [passwordValidate, setPasswordValidate] = useState(false)
     const [confirmPasswordValidate, setConfirmPasswordValidate] = useState(false)
     const [genderValidate, setGenderValidate] = useState(false)
-    // state for submit button validation end
 
-    const checkButtonValidation = () => {
+    useEffect(() => {
+        let matchPassword = document.getElementById("matchPassword")
+        let pass1 = document.getElementById("pass1")
+        let pass2 = document.getElementById("pass2")
         if (nameValidate && usernameValidate && phoneValidate && emailValidate && passwordValidate && confirmPasswordValidate && genderValidate) {
-            document.getElementById('submitBtn').disabled = false
+            if (checkPassword(password, confirmPassword)) {
+                document.getElementById('submitBtn').disabled = false
+                matchPasswordValid(matchPassword, pass1, pass2)
+            }
+            else {
+                document.getElementById('submitBtn').disabled = true
+                matchPasswordInvalid(matchPassword, pass1, pass2)
+            }
         }
         else {
             document.getElementById('submitBtn').disabled = true
         }
-    }
+    });
 
     const nameValidation = (e) => {
         let Value = e.target.value
@@ -46,27 +55,33 @@ const Signup = () => {
         else {
             undefinedValueLength(e, nameMsg)
         }
-        checkButtonValidation()
     }
+
     const usernameValidation = (e) => {
         let Value = e.target.value
         setUsername(Value)
-        let regex = /[a-zA-Z0-9@]/gi
+        let regex = /^(?=.*[0-9])[a-zA-Z0-9!@#$%^&*]{5,15}$/
         let usernameMsg = document.getElementById("usernameMsg")
-        Value = checkFieldCharacters(Value, regex)
-        if (Value !== undefined) {
-            setUsername(Value)
-            if (checkLength(Value, 5, 15, e, usernameMsg)) {   // Value, MinValue, MaxValue, event, usernameMsg
-                setUsernameValidate(true)
+        if (Value) {
+            if (Value.match(regex) !== null) {
+                setUsername(Value)
+                if (checkLength(Value, 5, 15, e, usernameMsg)) {   // Value, MinValue, MaxValue, event, usernameMsg
+                    setUsernameValidate(true)
+                }
+                else {
+                    setUsernameValidate(false)
+                }
             }
             else {
+                setUsername(Value)
+                let msg = "** Username Incorrect"
+                MainFieldValidationCheck(e, usernameMsg, msg)
                 setUsernameValidate(false)
             }
         }
         else {
             undefinedValueLength(e, usernameMsg)
         }
-        checkButtonValidation()
     }
 
     const emailValidation = (e) => {
@@ -94,7 +109,6 @@ const Signup = () => {
         else {
             undefinedValueLength(e, emailMsg)
         }
-        checkButtonValidation()
     }
 
     const phoneValidation = (e) => {
@@ -115,49 +129,61 @@ const Signup = () => {
         else {
             undefinedValueLength(e, phoneMsg)
         }
-        checkButtonValidation()
     }
 
+    // min 6 and max 15 character | atleast one is number | atleast one is special character
     const passwordValidation = (e) => {
         let Value = e.target.value
         setPassword(Value)
-        let regex = /[a-zA-Z0-9@$&*]/gi
         let passwordMsg = document.getElementById("passwordMsg")
-        Value = checkFieldCharacters(Value, regex)
-        if (Value !== undefined) {
-            setPassword(Value)
-            if (checkLength(Value, 6, 15, e, passwordMsg)) {   // Value, MinValue, MaxValue, event, passwordMsg
-                setPasswordValidate(true)
+        let regex = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,15}$/
+        if (Value) {
+            if (Value.match(regex) !== null) {
+                setPassword(Value)
+                if (checkLength(Value, 6, 15, e, passwordMsg)) {   // Value, MinValue, MaxValue, event, passwordMsg
+                    setPasswordValidate(true)
+                }
+                else {
+                    setPasswordValidate(false)
+                }
             }
             else {
+                setPassword(Value)
+                let msg = "** Password Incorrect"
+                MainFieldValidationCheck(e, passwordMsg, msg)
                 setPasswordValidate(false)
             }
         }
         else {
             undefinedValueLength(e, passwordMsg)
         }
-        checkButtonValidation()
     }
 
     const confirmPasswordValidation = (e) => {
         let Value = e.target.value
         setConfirmPassword(Value)
-        let regex = /[a-zA-Z0-9@$&*]/gi
         let confirmPasswordMsg = document.getElementById("confirmPasswordMsg")
-        Value = checkFieldCharacters(Value, regex)
-        if (Value !== undefined) {
-            setConfirmPassword(Value)
-            if (checkLength(Value, 6, 15, e, confirmPasswordMsg)) {   // Value, MinValue, MaxValue, event, confirmPasswordMsg
-                setConfirmPasswordValidate(true)
+        let regex = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,15}$/
+        if (Value) {
+            if (Value.match(regex) !== null) {
+                setConfirmPassword(Value)
+                if (checkLength(Value, 6, 15, e, confirmPasswordMsg)) {   // Value, MinValue, MaxValue, event, confirmPasswordMsg
+                    setConfirmPasswordValidate(true)
+                }
+                else {
+                    setConfirmPasswordValidate(false)
+                }
             }
             else {
+                setConfirmPassword(Value)
+                let msg = "** Password Incorrect"
+                MainFieldValidationCheck(e, confirmPasswordMsg, msg)
                 setConfirmPasswordValidate(false)
             }
         }
         else {
             undefinedValueLength(e, confirmPasswordMsg)
         }
-        checkButtonValidation()
     }
 
     const genderValidation = (e) => {
@@ -169,12 +195,7 @@ const Signup = () => {
 
     const submitForm = (e) => {
         e.preventDefault()
-        if (checkPassword(password, confirmPassword)) {
-            console.log(name, username, phone, email, password, confirmPassword, gender);
-        }
-        else {
-            console.log("Form Not submit");
-        }
+        console.log(name, username, phone, email, password, confirmPassword, gender);
     }
 
     return (
@@ -228,6 +249,7 @@ const Signup = () => {
                             <div id="confirmPasswordMsg"></div>
                         </div>
                     </div>
+                    <div className="text-center" id="matchPassword" style={{ display: 'block' }}></div>
                 </div>
 
                 {/* Gender */}
