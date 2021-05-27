@@ -9,6 +9,7 @@ const Card = () => {
     const [desc, setDesc] = useState('')
     const [date, setDate] = useState('')
     const [time, setTime] = useState('')
+    const [searchTodos, setSearchTodos] = useState('')
 
     const todos = useSelector((state) => state.todos.data);
     const dispatch = useDispatch()
@@ -28,9 +29,17 @@ const Card = () => {
         dispatch(updateTodo({ id: id, title: newTitle, desc: newDesc, date: new Date(dateObj.yyyy, dateObj.mm, dateObj.dd, dateObj.hours, dateObj.minutes, dateObj.seconds) }))
     }
 
+    const mySortedTodos = todos.slice().sort((a, b) => b.date - a.date) // sort todos date and time wise
+
+    const filteredCountries = mySortedTodos.filter(todoItem => {    // search todos title and description wise
+        return (
+            todoItem.title.toLowerCase().indexOf(searchTodos.toLowerCase()) !== -1 ||
+            todoItem.desc.toLowerCase().indexOf(searchTodos.toLowerCase()) !== -1
+        )
+    });
+
     if (todos.length) {
-        const mySortedTodos = todos.slice().sort((a, b) => b.date - a.date) // sort todos date wise
-        const taskItems = mySortedTodos.map((item) => {
+        const taskItems = filteredCountries.map((item) => {
             return (
                 <div key={item.id} className="col-md-3">
                     <div className="card my-2 shadow bg-body rounded" style={{ width: "16rem" }}>
@@ -80,9 +89,14 @@ const Card = () => {
                 </div>
             )
         })
+
         return (
             <>
-                <input type="search" className="form-control" id="search" placeholder="Enter keywords for search todos.." />
+                <div className="row">
+                    <div className="col-md-5">
+                        <input type="search" onChange={(e) => setSearchTodos(e.target.value)} value={searchTodos} className="form-control my-3" id="search" placeholder="Enter keywords for search todos.." />
+                    </div>
+                </div>
                 {taskItems}
             </>
         )
