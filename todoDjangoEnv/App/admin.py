@@ -1,3 +1,10 @@
 from django.contrib import admin
+from .models import *
 
-# Register your models here.
+@admin.register(Todos)
+class TodosAdmin(admin.ModelAdmin):
+    list_display = ['Title', 'id']
+
+@admin.register(Person)
+class PersonAdmin(admin.ModelAdmin):
+    list_display = ['Name', 'Username', 'Phone', "Gender"]
