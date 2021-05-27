@@ -11,7 +11,7 @@ const Form = () => {
     const handleFormSubmit = (e) => {
         e.preventDefault()
         let dateObj = setDatefun()
-        dispatch(addTodo({ id: cuid(), title: title, desc: desc, date: new Date(dateObj.yyyy, dateObj.mm, dateObj.dd, dateObj.hours, dateObj.minutes, dateObj.seconds)}))
+        dispatch(addTodo({ id: cuid(), title: title, desc: desc, date: new Date(dateObj.yyyy, dateObj.mm, dateObj.dd, dateObj.hours, dateObj.minutes, dateObj.seconds) }))
         document.getElementById("myForm").reset();
         document.getElementById("title").focus()
     }
@@ -26,7 +26,7 @@ const Form = () => {
 
                 <div className="mb-3">
                     <label htmlFor="desc" className="form-label">Description</label>
-                    <input required type="text" className="form-control" onChange={(e) => setDesc(e.target.value)} id="desc" placeholder="Enter work description" />
+                    <textarea required type="text" className="form-control" onChange={(e) => setDesc(e.target.value)} id="desc" placeholder="Enter work description" rows="5"></textarea>
                 </div>
                 <div className="text-center">
                     <button type="submit" className="btn btn-danger btn-sm w-25">Submit</button>

@@ -7,7 +7,12 @@ const ChangePassword = () => {
 
     const submitForm = (e) => {
         e.preventDefault()
-        console.log(currentPassword, newPassword, newConfirmPassword);
+        if(newPassword===newConfirmPassword){
+            console.log(currentPassword, newPassword, newConfirmPassword);
+        }
+        else{
+            console.log("Password doesn't match!");
+        }
         document.getElementById("myForm").reset();
     }
 

@@ -18,7 +18,7 @@ const Login = () => {
 
                 <div className="mb-3">
                     <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="password" className="form-label">Password</label>
-                    <input required type="text" className="form-control" id="password" placeholder="Please type password" onChange={(e) => setPassword(e.target.value)} value={password} />
+                    <input required type="password" className="form-control" id="password" placeholder="Please type password" onChange={(e) => setPassword(e.target.value)} value={password} />
                 </div>
             </form>
             <div className="text-center">

@@ -82,6 +82,7 @@ const Card = () => {
         })
         return (
             <>
+                <input type="search" className="form-control" id="search" placeholder="Enter keywords for search todos.." />
                 {taskItems}
             </>
         )
