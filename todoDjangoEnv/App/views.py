@@ -1,46 +1,100 @@
-# from .models import *
-# from rest_framework import status
-# from rest_framework.response import Response
-# from .serializers import Todos_Serializers
-# from rest_framework.views import APIView
-# from rest_framework.reverse import reverse
+from .models import *
+from rest_framework import status
+from rest_framework.views import APIView
+from .serializers import *
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
 
-# Create your views here.
+class ToDoAppViews(APIView):
+    def get(self, request, format=None):
+        queryset = Todos.objects.all()
+        serializer = Todos_Serializers(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-# class todos(APIView):
-#     def get(self, request, format = None):
-#         reg = Todos.objects.all()
-#         serializer = Todos_Serializers(reg, many=True)
-#         return Response(serializer.data)
-    
-#     def post(self, request, format = None):
-#         serializer = Todos_Serializers(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request, format=None):
+        try:
+            Id = request.data['id']
+            Title = request.data['Title']
+            Description = request.data['Description']
+            Date = request.data['Date']
+            todo = Todos(id=Id, Title=Title,
+                         Description=Description, Date=Date)
+            todo.save()
+            serializer = Todos_Serializers(todo)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
 
-# class todo_Detail(APIView):
-#     def get_object(self, pk):
-#         try:
-#             return Todos.objects.get(Id=pk)
-#         except Todos.DoesNotExist:
-#             return Response(status=status.HTTP_404_NOT_FOUND)
-    
-#     def get(self, request, pk, format = None):
-#         todo = self.get_object(pk)
-#         serializer = Todos_Serializers(todo)
-#         return Response(serializer.data)
-    
-#     def put(self, request, pk, format = None):
-#         todo = self.get_object(pk)
-#         serializer = Todos_Serializers(todo, data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)    
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-#     def delete(self, request, pk, format = None):
-#         todo = self.get_object(pk)
-#         todo.delete()
-#         return Response(status=status.HTTP_204_NO_CONTENT)
+    def put(self, request, format=None):
+        Id = request.data['id']
+        if Todos.objects.filter(id=Id):
+            Title = request.data['Title']
+            Description = request.data['Description']
+            Date = request.data['Date']
+            Todos.objects.filter(id=Id).update(
+                Title=Title, Description=Description, Date=Date)
+            return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
+
+    def delete(self, request, format=None):
+        Id = request.data['id']
+        if Todos.objects.filter(id=Id):
+            Todos.objects.filter(id=Id).delete()
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class PersonAppViews(APIView):
+    def get(self, request, format=None):
+        queryset = Person.objects.all()
+        serializer = Person_Serializers(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, format=None):
+        try:
+            Id = request.data['id']
+            Name = request.data['Name']
+            Username = request.data['Username']
+            Phone = request.data['Phone']
+            Email = request.data['Email']
+            Password = request.data['Password']
+            Confirm_Password = request.data['Confirm_Password']
+            Gender = request.data['Gender']
+            person = Person(id=Id, Name=Name, Username=Username, Phone=Phone, Email=Email,
+                            Password=Password, Confirm_Password=Confirm_Password, Gender=Gender)
+            person.save()
+            serializer = Person_Serializers(person)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+    def put(self, request, format=None):
+        Id = request.data['id']
+        if Person.objects.filter(id=Id):
+            Name = request.data['Name']
+            Username = request.data['Username']
+            Phone = request.data['Phone']
+            Email = request.data['Email']
+            Password = request.data['Password']
+            Confirm_Password = request.data['Confirm_Password']
+            Gender = request.data['Gender']
+            Person.objects.filter(id=Id).update(id=Id, Name=Name, Username=Username, Phone=Phone,
+                                                Email=Email, Password=Password, Confirm_Password=Confirm_Password, Gender=Gender)
+            return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
+
+    def delete(self, request, format=None):
+        Id = request.data['id']
+        if Person.objects.filter(id=Id):
+            Person.objects.filter(id=Id).delete()
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+class ApiRoot(APIView):
+    def get(self, request, format = None):
+        return Response({
+            'Todos': reverse('todos',request=request, format=format),
+            'Persons': reverse('person',request=request, format=format),
+        })
