@@ -1,9 +1,9 @@
 from django.contrib import admin
 from .models import *
 
-@admin.register(Person)
-class PersonAdmin(admin.ModelAdmin):
-    list_display = ['Name', 'Username', 'Phone', "Gender"]
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ['username', 'email', 'phone']
 
 @admin.register(Todos)
 class TodosAdmin(admin.ModelAdmin):

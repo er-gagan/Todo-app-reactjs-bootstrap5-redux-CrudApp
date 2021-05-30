@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'App',
     'rest_framework',
+    'corsheaders',
 ]
 
 REST_FRAMEWORK = {
@@ -52,6 +53,7 @@ REST_FRAMEWORK = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -129,8 +131,14 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+AUTH_USER_MODEL = 'App.User'
+
 SIMPLE_JWT = {
     # 'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]

@@ -195,7 +195,31 @@ const Signup = () => {
 
     const submitForm = (e) => {
         e.preventDefault()
-        console.log(name, username, phone, email, password, confirmPassword, gender);
+        let user = {
+            "name": name,
+            "username": username,
+            "password": password,
+            "email": email,
+            "phone": phone,
+            "gender": gender
+        }
+        fetch('http://127.0.0.1:8000/api/register', {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(user)
+        }).then((result) => {
+            if(result.status===201){
+                result.json().then((response) => {
+                    console.log(response);
+                })
+            }
+            else{
+                console.log("Something went wrong | Please check your internet");
+            }
+        })
     }
 
     return (
