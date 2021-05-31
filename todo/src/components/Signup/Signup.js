@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { checkPassword, checkFieldCharacters, checkLength, undefinedValueLength, InvallidEmailValue, correctCharacters, MainFieldValidationCheck, matchPasswordValid, matchPasswordInvalid } from './SignupFormValidation'
-
+import { Link, Redirect, useHistory } from "react-router-dom";
+import Navbar from '../navbar/Navbar'
 const Signup = () => {
+    let token = localStorage.getItem('token')
+    let history = useHistory();
     const [name, setName] = useState('')
     const [username, setUsername] = useState('')
     const [phone, setPhone] = useState('')
@@ -19,23 +22,25 @@ const Signup = () => {
     const [genderValidate, setGenderValidate] = useState(false)
 
     useEffect(() => {
-        let matchPassword = document.getElementById("matchPassword")
-        let pass1 = document.getElementById("pass1")
-        let pass2 = document.getElementById("pass2")
-        if (nameValidate && usernameValidate && phoneValidate && emailValidate && passwordValidate && confirmPasswordValidate && genderValidate) {
-            if (checkPassword(password, confirmPassword)) {
-                document.getElementById('submitBtn').disabled = false
-                matchPasswordValid(matchPassword, pass1, pass2)
+        if (token === null) {
+            let matchPassword = document.getElementById("matchPassword")
+            let pass1 = document.getElementById("pass1")
+            let pass2 = document.getElementById("pass2")
+            if (nameValidate && usernameValidate && phoneValidate && emailValidate && passwordValidate && confirmPasswordValidate && genderValidate) {
+                if (checkPassword(password, confirmPassword)) {
+                    document.getElementById('submitBtn').disabled = false
+                    matchPasswordValid(matchPassword, pass1, pass2)
+                }
+                else {
+                    document.getElementById('submitBtn').disabled = true
+                    matchPasswordInvalid(matchPassword, pass1, pass2)
+                }
             }
             else {
                 document.getElementById('submitBtn').disabled = true
-                matchPasswordInvalid(matchPassword, pass1, pass2)
             }
         }
-        else {
-            document.getElementById('submitBtn').disabled = true
-        }
-    });
+    }, [token, nameValidate, usernameValidate, phoneValidate, emailValidate, passwordValidate, confirmPasswordValidate, genderValidate, confirmPassword, password]);
 
     const nameValidation = (e) => {
         let Value = e.target.value
@@ -211,88 +216,99 @@ const Signup = () => {
             },
             body: JSON.stringify(user)
         }).then((result) => {
-            if(result.status===201){
+            if (result.status === 201) {
                 result.json().then((response) => {
                     console.log(response);
+                    history.push("/login");
                 })
             }
-            else{
+            else {
                 console.log("Something went wrong | Please check your internet");
             }
         })
     }
 
     return (
-        <div className="container my-2">
-            <h3>Signup Form</h3>
-            <form onSubmit={submitForm}>
-                <div className="row">
-                    <div className="col-md-6">
-                        <div className="mb-3">
-                            <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="name" className="form-label">Name</label>
-                            <input required autoFocus type="text" className="form-control" id="name" placeholder="Please type your name" onChange={(e) => nameValidation(e)} value={name} />
-                            <div id="nameMsg"></div>
-                        </div>
-                    </div>
+        <>
+        <Navbar/>
+            {(token !== null) ?
+                <Redirect to="/"></Redirect>
+                :
+                <div className="container my-2">
+                    <h3>Signup Form</h3>
+                    <form onSubmit={submitForm}>
+                        <div className="row">
+                            <div className="col-md-6">
+                                <div className="mb-3">
+                                    <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="name" className="form-label">Name</label>
+                                    <input required autoFocus type="text" className="form-control" id="name" placeholder="Please type your name" onChange={(e) => nameValidation(e)} value={name} />
+                                    <div id="nameMsg"></div>
+                                </div>
+                            </div>
 
-                    <div className="col-md-6">
-                        <div className="mb-3">
-                            <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="username" className="form-label">Username</label>
-                            <input required type="text" className="form-control" id="username" placeholder="Please type a username" onChange={(e) => usernameValidation(e)} value={username} />
-                            <div id="usernameMsg"></div>
-                        </div>
-                    </div>
+                            <div className="col-md-6">
+                                <div className="mb-3">
+                                    <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="username" className="form-label">Username</label>
+                                    <input required type="text" className="form-control" id="username" placeholder="Please type a username" onChange={(e) => usernameValidation(e)} value={username} />
+                                    <div id="usernameMsg"></div>
+                                </div>
+                            </div>
 
-                    <div className="col-md-6">
-                        <div className="mb-3">
-                            <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="phone" className="form-label">Phone</label>
-                            <input required type="text" className="form-control" id="phone" placeholder="Please type your phone number" onChange={(e) => phoneValidation(e)} value={phone} />
-                            <div id="phoneMsg"></div>
-                        </div>
-                    </div>
+                            <div className="col-md-6">
+                                <div className="mb-3">
+                                    <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="phone" className="form-label">Phone</label>
+                                    <input required type="text" className="form-control" id="phone" placeholder="Please type your phone number" onChange={(e) => phoneValidation(e)} value={phone} />
+                                    <div id="phoneMsg"></div>
+                                </div>
+                            </div>
 
-                    <div className="col-md-6">
-                        <div className="mb-3">
-                            <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="email" className="form-label">Email address</label>
-                            <input required type="email" className="form-control" id="email" placeholder="name@example.com" onChange={(e) => emailValidation(e)} value={email} />
-                            <div id="emailMsg"></div>
-                        </div>
-                    </div>
+                            <div className="col-md-6">
+                                <div className="mb-3">
+                                    <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="email" className="form-label">Email address</label>
+                                    <input required type="email" className="form-control" id="email" placeholder="name@example.com" onChange={(e) => emailValidation(e)} value={email} />
+                                    <div id="emailMsg"></div>
+                                </div>
+                            </div>
 
-                    <div className="col-md-6">
-                        <div className="mb-3">
-                            <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="pass1" className="form-label">Password</label>
-                            <input required type="password" className="form-control" id="pass1" placeholder="Enter a unique password" onChange={(e) => passwordValidation(e)} value={password} />
-                            <div id="passwordMsg"></div>
+                            <div className="col-md-6">
+                                <div className="mb-3">
+                                    <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="pass1" className="form-label">Password</label>
+                                    <input required type="password" className="form-control" id="pass1" placeholder="Enter a unique password" onChange={(e) => passwordValidation(e)} value={password} />
+                                    <div id="passwordMsg"></div>
+                                </div>
+                            </div>
+                            <div className="col-md-6">
+                                <div className="mb-3">
+                                    <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="pass2" className="form-label">Confirm Password</label>
+                                    <input required type="password" className="form-control" id="pass2" placeholder="Re-type password" onChange={(e) => confirmPasswordValidation(e)} value={confirmPassword} />
+                                    <div id="confirmPasswordMsg"></div>
+                                </div>
+                            </div>
+                            <div className="text-center" id="matchPassword" style={{ display: 'block' }}></div>
                         </div>
-                    </div>
-                    <div className="col-md-6">
+
+                        {/* Gender */}
                         <div className="mb-3">
-                            <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="pass2" className="form-label">Confirm Password</label>
-                            <input required type="password" className="form-control" id="pass2" placeholder="Re-type password" onChange={(e) => confirmPasswordValidation(e)} value={confirmPassword} />
-                            <div id="confirmPasswordMsg"></div>
+                            <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="Gender" className="form-label">Gender</label>
+                            <select id="Gender" className="form-select" onChange={(e) => genderValidation(e)}>
+                                <option hidden>Please select your gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Others">Others</option>
+                            </select>
+                            <div id="genderMsg"></div>
                         </div>
+
+                        <div className="text-center">
+                            <input type="submit" value="Submit" id="submitBtn" className="btn btn-danger btn-sm w-25" />
+                        </div>
+                    </form>
+                    <div className="text-center">
+                        <Link to="/login">Already have an account? Sign in</Link>
                     </div>
-                    <div className="text-center" id="matchPassword" style={{ display: 'block' }}></div>
                 </div>
-
-                {/* Gender */}
-                <div className="mb-3">
-                    <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="Gender" className="form-label">Gender</label>
-                    <select id="Gender" className="form-select" onChange={(e) => genderValidation(e)}>
-                        <option hidden>Please select your gender</option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="Others">Others</option>
-                    </select>
-                    <div id="genderMsg"></div>
-                </div>
-
-                <div className="text-center">
-                    <input type="submit" value="Submit" id="submitBtn" className="btn btn-danger btn-sm w-25" />
-                </div>
-            </form>
-        </div>
+            }
+        </>
     )
 }
 

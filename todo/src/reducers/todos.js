@@ -8,7 +8,6 @@ const todos = (state = initialState, action) => {
             return {
                 ...state, // spread operator
                 data: [...state.data, action.todoItem],
-
             };
         case "DELETE_TODO":
             return {

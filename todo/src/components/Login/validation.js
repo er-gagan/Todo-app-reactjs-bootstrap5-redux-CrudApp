@@ -19,14 +19,14 @@ const showToast = () => {
     })
 }
 
-const toastContentForSuccess = () => {
-    document.getElementById("toastTitle").innerText = "Logged In"
-    document.getElementById("toastDesc").innerText = "You have successfully logged in."
-    document.getElementById("toastLine").style.backgroundColor = "springgreen"
-    document.getElementById("setIcon").style.backgroundColor = "lightgreen"
-    document.getElementById("setIcon").style.color = "cadetblue"
-    document.getElementById("setIcon").innerText = "check"
-}
+// const toastContentForSuccess = () => {
+//     document.getElementById("toastTitle").innerText = "Logged In"
+//     document.getElementById("toastDesc").innerText = "You have successfully logged in."
+//     document.getElementById("toastLine").style.backgroundColor = "springgreen"
+//     document.getElementById("setIcon").style.backgroundColor = "lightgreen"
+//     document.getElementById("setIcon").style.color = "cadetblue"
+//     document.getElementById("setIcon").innerText = "check"
+// }
 
 const toastContentForFailure = () => {
     document.getElementById("toastTitle").innerText = "Error Occured"
@@ -37,5 +37,5 @@ const toastContentForFailure = () => {
     document.getElementById("setIcon").innerText = "close"
 }
 
-
-export { showToast, toastContentForSuccess, toastContentForFailure }
+// export { showToast, toastContentForSuccess, toastContentForFailure }
+export { showToast, toastContentForFailure }
