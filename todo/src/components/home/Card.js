@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { deleteTodo, updateTodo } from '../../actions';
+import { deleteTodo, updateTodo } from '../../actions/todosActions';
 import { setDatefun, setTimefun, Datefun } from './setDateTimeModule.js'
 
 const Card = () => {
@@ -26,15 +26,15 @@ const Card = () => {
         let newTitle = document.getElementById("editTitle").value
         let newDesc = document.getElementById("editDesc").value
         let dateObj = setDatefun()
-        dispatch(updateTodo({ id: id, title: newTitle, desc: newDesc, date: new Date(dateObj.yyyy, dateObj.mm, dateObj.dd, dateObj.hours, dateObj.minutes, dateObj.seconds) }))
+        dispatch(updateTodo({ id: id, Title: newTitle, Description: newDesc, Date: new Date(dateObj.yyyy, dateObj.mm, dateObj.dd, dateObj.hours, dateObj.minutes, dateObj.seconds) }))
     }
 
-    const mySortedTodos = todos.slice().sort((a, b) => b.date - a.date) // sort todos date and time wise
+    const mySortedTodos = todos.slice().sort((a, b) => b.Date - a.Date) // sort todos date and time wise
 
     const filteredCountries = mySortedTodos.filter(todoItem => {    // search todos title and description wise
         return (
-            todoItem.title.toLowerCase().indexOf(searchTodos.toLowerCase()) !== -1 ||
-            todoItem.desc.toLowerCase().indexOf(searchTodos.toLowerCase()) !== -1
+            todoItem.Title.toLowerCase().indexOf(searchTodos.toLowerCase()) !== -1 ||
+            todoItem.Description.toLowerCase().indexOf(searchTodos.toLowerCase()) !== -1
         )
     });
 
@@ -44,10 +44,10 @@ const Card = () => {
                 <div key={item.id} className="col-md-3">
                     <div className="card my-2 shadow bg-body rounded" style={{ width: "16rem" }}>
                         <div className="card-body">
-                            <h5 className="card-title">{(item.title.length > 15) ? item.title.slice(0, 15) + "..." : item.title}</h5>
+                            <h5 className="card-title">{(item.Title.length > 15) ? item.Title.slice(0, 15) + "..." : item.Title}</h5>
                             <hr />
                             <h6 className="card-subtitle mb-2 text-muted">Description</h6>
-                            <p className="card-text" style={{ textAlign: 'justify' }}>{(item.desc.length > 100) ? item.desc.slice(0, 100) + "..." : item.desc}</p>
+                            <p className="card-text" style={{ textAlign: 'justify' }}>{(item.Description.length > 100) ? item.Description.slice(0, 100) + "..." : item.Description}</p>
 
                             {/* Modal for open button start */}
                             <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -80,7 +80,7 @@ const Card = () => {
                             {/* Modal for open button end */}
 
                             <div className="text-center">
-                                <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" className="btn btn-info btn-sm" onClick={() => openbtn(item.id, item.title, item.desc, item.date)}>Open</button>
+                                <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" className="btn btn-info btn-sm" onClick={() => openbtn(item.id, item.Title, item.Description, item.Date)}>Open</button>
 
                                 <button className="btn btn-warning btn-sm mx-3" onClick={() => dispatch(deleteTodo(item.id))}>Delete</button>
                             </div>

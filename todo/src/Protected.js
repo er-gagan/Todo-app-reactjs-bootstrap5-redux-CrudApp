@@ -1,12 +1,14 @@
 import React from 'react'
-// import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Redirect } from "react-router-dom";
-// import { addToken } from './actions';
+import { addToken } from './actions/tokenActions';
+
 
 const Protected = (props) => {
     let Component = props.component
     let token = localStorage.getItem('token')
-
+    const dispatch = useDispatch()
+    dispatch(addToken(token))
     return (
         <div>
             {(token !== null) ? <Component /> : <Redirect to="login"></Redirect>}

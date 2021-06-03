@@ -18,7 +18,7 @@ const todos = (state = initialState, action) => {
             return {
                 ...state,
                 data: [...state.data.filter((todo) => todo.id !== action.id),
-                { id: action.id, title: action.title, desc: action.desc, date: action.date },
+                { id: action.id, Title: action.Title, Description: action.Description, Date: action.Date },
                 ],
             };
         default:

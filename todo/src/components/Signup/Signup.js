@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { checkPassword, checkFieldCharacters, checkLength, undefinedValueLength, InvallidEmailValue, correctCharacters, MainFieldValidationCheck, matchPasswordValid, matchPasswordInvalid } from './SignupFormValidation'
-import { Link, Redirect, useHistory } from "react-router-dom";
-import Navbar from '../navbar/Navbar'
+import { Link, useHistory, Redirect } from "react-router-dom";
 const Signup = () => {
-    let token = localStorage.getItem('token')
-    let history = useHistory();
+    const token = localStorage.getItem("token")
+    const history = useHistory()
     const [name, setName] = useState('')
     const [username, setUsername] = useState('')
     const [phone, setPhone] = useState('')
@@ -22,7 +21,7 @@ const Signup = () => {
     const [genderValidate, setGenderValidate] = useState(false)
 
     useEffect(() => {
-        if (token === null) {
+        if (!token) {
             let matchPassword = document.getElementById("matchPassword")
             let pass1 = document.getElementById("pass1")
             let pass2 = document.getElementById("pass2")
@@ -40,7 +39,7 @@ const Signup = () => {
                 document.getElementById('submitBtn').disabled = true
             }
         }
-    }, [token, nameValidate, usernameValidate, phoneValidate, emailValidate, passwordValidate, confirmPasswordValidate, genderValidate, confirmPassword, password]);
+    }, [nameValidate, usernameValidate, phoneValidate, emailValidate, passwordValidate, confirmPasswordValidate, genderValidate, confirmPassword, password, token]);
 
     const nameValidation = (e) => {
         let Value = e.target.value
@@ -208,32 +207,14 @@ const Signup = () => {
             "phone": phone,
             "gender": gender
         }
-        fetch('http://127.0.0.1:8000/api/register', {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(user)
-        }).then((result) => {
-            if (result.status === 201) {
-                result.json().then((response) => {
-                    console.log(response);
-                    history.push("/login");
-                })
-            }
-            else {
-                console.log("Something went wrong | Please check your internet");
-            }
-        })
+        console.log(user)
+        console.log("Successfully Signed up!");
+        history.push('/login')
     }
 
     return (
         <>
-        <Navbar/>
-            {(token !== null) ?
-                <Redirect to="/"></Redirect>
-                :
+            {!token ?
                 <div className="container my-2">
                     <h3>Signup Form</h3>
                     <form onSubmit={submitForm}>
@@ -307,6 +288,8 @@ const Signup = () => {
                         <Link to="/login">Already have an account? Sign in</Link>
                     </div>
                 </div>
+                :
+                <Redirect to="/" />
             }
         </>
     )

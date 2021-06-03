@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { addTodo } from '../../actions'
+import { addTodo } from '../../actions/todosActions'
 import cuid from 'cuid'
 import { setDatefun } from './setDateTimeModule.js'
 
@@ -11,7 +11,7 @@ const Form = () => {
     const handleFormSubmit = (e) => {
         e.preventDefault()
         let dateObj = setDatefun()
-        dispatch(addTodo({ id: cuid(), title: title, desc: desc, date: new Date(dateObj.yyyy, dateObj.mm, dateObj.dd, dateObj.hours, dateObj.minutes, dateObj.seconds) }))
+        dispatch(addTodo({ id: cuid(), Title: title, Description: desc, Date: new Date(dateObj.yyyy, dateObj.mm, dateObj.dd, dateObj.hours, dateObj.minutes, dateObj.seconds) }))
         document.getElementById("myForm").reset();
         document.getElementById("title").focus()
     }

@@ -1,45 +1,39 @@
 import React, { useState, useEffect } from 'react'
-// import { showToast, toastContentForSuccess, toastContentForFailure } from './validation'
-import { showToast, toastContentForFailure } from './validation'
-import { Link, Redirect } from "react-router-dom";
-import Navbar from '../navbar/Navbar';
+import { Link, useHistory, Redirect } from "react-router-dom";
+import { useDispatch } from 'react-redux';
+import { addToken } from '../../actions/tokenActions';
 
 const Login = () => {
+    const dispatch = useDispatch()
+    const history = useHistory();
     const [userEmailPhone, setUserEmailPhone] = useState('')
     const [password, setPassword] = useState('')
-    const [toastTrigger, setToastTrigger] = useState(false)
-    const [token, setToken] = useState(localStorage.getItem('token'))
+    const token = localStorage.getItem("token")
 
     const submitForm = (e) => {
         e.preventDefault()
-        let userLogin = {
-            "username": userEmailPhone,
-            "password": password
+        // let userLogin = {
+        //     "username": userEmailPhone,
+        //     "password": password
+        // }
+        let _token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9'
+        if (_token) {
+            localStorage.setItem("token", _token)
+            dispatch(addToken(_token))
+            history.push("/");
+            console.log("You have successfully logged in");
         }
-        fetch('http://127.0.0.1:8000/api/login', {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(userLogin)
-        }).then((result) => {
-            if (result.status === 200) {
-                result.json().then((response) => {
-                    let _token = response.access
-                    localStorage.setItem("token", _token)
-                    setToken(_token)
-                })
-            }
-            else {
-                toastContentForFailure()
-                localStorage.clear()
-            }
-            setToastTrigger(true)
-        })
+        else {
+            setUserEmailPhone("")
+            setPassword("")
+            dispatch(addToken(''))
+            document.getElementById("name").focus()
+            localStorage.clear()
+            console.log("Something went wrong, Please check your internet and credentials!");
+        }
     }
     useEffect(() => {
-        if (token === null) {
+        if (!token) {
             if ((userEmailPhone.length < 5) || (password.length < 5)) {
                 document.getElementById("liveToastBtn").disabled = true
             }
@@ -49,21 +43,14 @@ const Login = () => {
         }
     }, [userEmailPhone, password, token]);
 
-    useEffect(() => {
-        if (token === null) {
-            showToast()
-        }
-    }, [toastTrigger, token]);
-
     return (
         <>
-        <Navbar/>
-            {(token !== null) ?
-                <Redirect to="/"></Redirect>
+            {token ?
+                <Redirect to="/" />
                 :
                 <div className="container my-2">
                     <h3>Login Form</h3>
-                    <form onSubmit={submitForm}>
+                    <form onSubmit={submitForm} id="myForm1">
                         <div className="mb-3">
                             <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="name" className="form-label">Enter Username, Email or Phone</label>
                             <input required autoFocus type="text" className="form-control" id="name" placeholder="Please type your username, email or phone" onChange={(e) => setUserEmailPhone(e.target.value)} value={userEmailPhone} />
@@ -79,21 +66,6 @@ const Login = () => {
                     </form>
                     <div className="text-center">
                         <Link to="/signup">You don't have an account? Sign up</Link>
-                    </div>
-
-                    {/* Show Toast */}
-                    <div className="position-fixed bottom-0 end-0 p-3" style={{ zIndex: 5 }}>
-                        <div id="liveToast" className="toast hide">
-                            <div style={{ fontSize: "5px" }} id="toastLine" className="px-1">&nbsp;</div>
-                            <div className="toast-header">
-                                <i className="material-icons rounded me-2" id="setIcon"></i>
-                                <strong id="toastTitle" className="me-auto"></strong>
-                                <small>1 seconds ago</small>
-                                <input type="button" id="closeId" className="btn-close" />
-                            </div>
-                            <div id="toastDesc" className="toast-body">
-                            </div>
-                        </div>
                     </div>
                 </div>
             }

@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import Navbar from '../navbar/Navbar'
 const ChangePassword = () => {
     const [currentPassword, setCurrentPassword] = useState('')
     const [newPassword, setNewPassword] = useState('')
@@ -17,8 +16,6 @@ const ChangePassword = () => {
     }
 
     return (
-        <>
-        <Navbar/>
         <div className="container my-2">
             <h3>Change Password</h3>
             <form onSubmit={submitForm} id="myForm">
@@ -41,7 +38,6 @@ const ChangePassword = () => {
                 </div>
             </form>
         </div>
-        </>
     )
 }
 

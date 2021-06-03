@@ -1,20 +1,24 @@
 import React from 'react'
-import Navbar from '../navbar/Navbar'
+import { useSelector } from 'react-redux'
 import Card from './Card'
 import Form from './Form'
-// import Navbar from './components/navbar/Navbar';
+import { Redirect } from "react-router-dom";
 
 const Home = () => {
+    const token = useSelector(state => state.token.data)
     return (
         <>
-            <Navbar />
-            <div className="container my-2">
-                <h3 className="text-center">Todo App</h3>
-                <Form />
-                <div className="row my-3">
-                    <Card />
+            {token ?
+                <div className="container my-2">
+                    <h3 className="text-center">Todo App</h3>
+                    <Form />
+                    <div className="row my-3">
+                        <Card />
+                    </div>
                 </div>
-            </div>
+                : 
+                <Redirect to="/login" />
+            }
         </>
     )
 }

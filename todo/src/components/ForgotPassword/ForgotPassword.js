@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
+import { Redirect, useHistory } from 'react-router-dom'
 import { checkLength, undefinedValueLength, MainFieldValidationCheck, matchPasswordValid, matchPasswordInvalid } from './Validation'
-import { Redirect } from "react-router-dom";
-import Navbar from '../navbar/Navbar';
 
 const ForgotPassword = () => {
-    let token = localStorage.getItem('token')
+    const token = localStorage.getItem("token")
+    const history = useHistory()
     const [email, setEmail] = useState('')
     const [emailOtp, setEmailOtp] = useState('')
     const [password, setPassword] = useState('')
@@ -14,6 +14,7 @@ const ForgotPassword = () => {
     const [otpValidate, setOtpValidate] = useState(false)
     const [passwordValidate, setPasswordValidate] = useState(false)
     const [confirmPasswordValidate, setConfirmPasswordValidate] = useState(false)
+    // const [token] = useState(localStorage.getItem("token"))
 
     const emailValidation = (e) => {
         let Value = e.target.value
@@ -43,7 +44,7 @@ const ForgotPassword = () => {
         }
     }
     useEffect(() => {
-        if (token === null) {
+        if (!token) {
             if (emailValidate) {
                 document.getElementById('emailBtn').disabled = false
             }
@@ -51,7 +52,7 @@ const ForgotPassword = () => {
                 document.getElementById('emailBtn').disabled = true
             }
         }
-    }, [token, emailValidate]);
+    }, [emailValidate, token]);
 
     const otpValidation = (e) => {
         let Value = e.target.value
@@ -81,7 +82,7 @@ const ForgotPassword = () => {
         }
     }
     useEffect(() => {
-        if (token === null) {
+        if (!token) {
             if (otpValidate) {
                 document.getElementById('otpBtn').disabled = false
             }
@@ -89,7 +90,7 @@ const ForgotPassword = () => {
                 document.getElementById('otpBtn').disabled = true
             }
         }
-    }, [token, otpValidate]);
+    }, [otpValidate, token]);
 
     // min 6 and max 15 character | atleast one is number | atleast one is special character
     const passwordValidation = (e) => {
@@ -146,7 +147,7 @@ const ForgotPassword = () => {
         }
     }
     useEffect(() => {
-        if (token === null) {
+        if (!token) {
             let passwordBtn = document.getElementById("passwordBtn")
             let matchPassword = document.getElementById("matchPassword")
             let pass1 = document.getElementById("pass1")
@@ -180,13 +181,14 @@ const ForgotPassword = () => {
     const passwordSubmit = (e) => {
         e.preventDefault()
         console.log(password, confirmPassword);
+        history.push('/login')
+        console.log("Password is forgetted");
     }
 
     return (
         <>
-        <Navbar/>
-            {(token !== null) ?
-                <Redirect to="/"></Redirect>
+            {token ?
+                <Redirect to="/" />
                 :
                 <div className="container my-2">
                     <h3>Forgot Password</h3>
