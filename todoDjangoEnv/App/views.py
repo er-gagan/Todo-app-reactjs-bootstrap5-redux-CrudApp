@@ -1,3 +1,4 @@
+from datetime import date
 from rest_framework import response
 from .models import *
 from django.db.models import Q
@@ -11,6 +12,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.backends import TokenBackend
 # from rest_framework_simplejwt.tokens import RefreshToken  # generate jwt manually
 
+
 def get_user_info(request):
     token = request.META.get('HTTP_AUTHORIZATION', " ").split(' ')[1]
     valid_data = TokenBackend(
@@ -19,10 +21,12 @@ def get_user_info(request):
     user = User.objects.get(id=id)
     return user
 
+
 def get_todos(user):
     queryset = Todos.objects.filter(user=user)
     serializer = TodosSerializer(queryset, many=True)
     return serializer
+
 
 class ToDoAppViews(APIView):
     authentication_classes = [JWTAuthentication]
@@ -42,8 +46,7 @@ class ToDoAppViews(APIView):
             Date = request.data['Date']
             Todos(user=user, id=id, Title=Title,
                   Description=Description, Date=Date).save()
-            serializer = get_todos(user)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_200_OK)
         except:
             return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
 
@@ -58,10 +61,9 @@ class ToDoAppViews(APIView):
             if todo:
                 todo.update(
                     Title=Title, Description=Description, Date=Date)
-                serializer = get_todos(user)
-                return Response(serializer.data, status=status.HTTP_200_OK)
+                return Response(status=status.HTTP_200_OK)
             else:
-                return Response(status=status.HTTP_406_NOT_ACCEPTABLE)    
+                return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
         except:
             return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
 
@@ -72,8 +74,8 @@ class ToDoAppViews(APIView):
             todo = Todos.objects.get(Q(id=id) & Q(user=user))
             if todo:
                 todo.delete()
-                serializer = get_todos(user)
-                return Response(serializer.data, status=status.HTTP_200_OK)
+                # serializer = get_todos(user)
+                return Response(status=status.HTTP_200_OK)
             else:
                 return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
         except:
@@ -90,7 +92,8 @@ class UserView(APIView):
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            return Response({'Exception':str(e)},status=status.HTTP_406_NOT_ACCEPTABLE)
+            return Response({'Exception': str(e)}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
 
 class ApiRoot(APIView):
     def get(self, request, format=None):

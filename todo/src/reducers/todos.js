@@ -1,29 +1,31 @@
+import { createSlice } from "@reduxjs/toolkit";
+// import { getTodos } from "./todosApi";
+
 const initialState = {
     data: [],
 }
 
-const todos = (state = initialState, action) => {
-    switch (action.type) {
-        case "ADD_TODO":
-            return {
-                ...state, // spread operator
-                data: [...state.data, action.todoItem],
-            };
-        case "DELETE_TODO":
-            return {
-                ...state,
-                data: [...state.data.filter((todo) => todo.id !== action.id)],
-            };
-        case "UPDATE_TODO":
-            return {
-                ...state,
-                data: [...state.data.filter((todo) => todo.id !== action.id),
-                { id: action.id, Title: action.Title, Description: action.Description, Date: action.Date },
-                ],
-            };
-        default:
-            return state
+const todos = createSlice({
+    name: "todos",
+    initialState,
+    reducers: {
+        addTodo(state, action) {
+            state.data = [...state.data, action.payload]
+        },
+        deleteTodo(state, action) {
+            state.data = [...state.data.filter((todo) => todo.id !== action.payload)]
+        },
+        updateTodo(state, action) {
+            state.data = [...state.data.filter((todo) => todo.id !== action.payload.id),
+            { id: action.payload.id, Title: action.payload.Title, Description: action.payload.Description, Date: action.payload.Date },
+            ]
+        },
+        deleteAllTodos(state, action){
+            state.data = action.payload
+        }
     }
-};
+})
 
-export default todos
+export const { addTodo, deleteTodo, updateTodo, deleteAllTodos } = todos.actions
+
+export default todos.reducer

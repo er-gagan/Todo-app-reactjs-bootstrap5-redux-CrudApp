@@ -1,16 +1,19 @@
+import { createSlice } from "@reduxjs/toolkit";
+
 const initialState = {
     data: '',
 }
 
-const token = (state = initialState, action) => {
-    switch (action.type) {
-        case "TOKEN":
-            return {
-                data: action.token,
-            };
-        default:
-            return state
+const token = createSlice({
+    name:"token",
+    initialState,
+    reducers:{
+        addToken(state, action){
+            state.data = action.payload
+        }
     }
-}
+})
 
-export default token
+export const {addToken} = token.actions
+
+export default token.reducer

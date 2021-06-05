@@ -1,8 +1,10 @@
-import React from 'react'
-import userImage from './user.png'
-import { Link, useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
-import { addToken } from '../../actions/tokenActions';
+import { Link, useHistory } from "react-router-dom";
+import { addToken } from '../../reducers/token';
+import { deleteAllTodos } from '../../reducers/todos.js'
+import userImage from './user.png'
+import React from 'react'
+
 
 const Navbar = () => {
     const token = useSelector(state => state.token.data)
@@ -10,7 +12,8 @@ const Navbar = () => {
     const history = useHistory();
     const logOut = () => {
         localStorage.clear()
-        dispatch(addToken(""))
+        dispatch(deleteAllTodos([]))
+        dispatch(addToken(''))
         history.push("/login");
         console.log("Successfully logged out");
     }

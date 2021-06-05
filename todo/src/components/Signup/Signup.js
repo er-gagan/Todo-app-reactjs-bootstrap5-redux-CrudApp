@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { checkPassword, checkFieldCharacters, checkLength, undefinedValueLength, InvallidEmailValue, correctCharacters, MainFieldValidationCheck, matchPasswordValid, matchPasswordInvalid } from './SignupFormValidation'
 import { Link, useHistory, Redirect } from "react-router-dom";
+
 const Signup = () => {
     const token = localStorage.getItem("token")
     const history = useHistory()
@@ -207,9 +208,26 @@ const Signup = () => {
             "phone": phone,
             "gender": gender
         }
-        console.log(user)
-        console.log("Successfully Signed up!");
-        history.push('/login')
+
+        fetch('http://127.0.0.1:8000/api/register', {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(user)
+        }).then((result) => {
+            if (result.status === 201) {
+                result.json().then((response) => {
+                    console.log(response)
+                    console.log("Successfully Signed up!");
+                    history.push('/login')
+                })
+            }
+            else {
+                console.log("Something went wrong");
+            }
+        })
     }
 
     return (
@@ -281,7 +299,7 @@ const Signup = () => {
                         </div>
 
                         <div className="text-center">
-                            <input type="submit" value="Submit" id="submitBtn" className="btn btn-danger btn-sm w-25" />
+                            <input type="submit" value="Signup" id="submitBtn" className="btn btn-danger btn-sm w-25" />
                         </div>
                     </form>
                     <div className="text-center">

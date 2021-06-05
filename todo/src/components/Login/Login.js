@@ -1,47 +1,95 @@
-import React, { useState, useEffect } from 'react'
+import { checkLength, MainFieldValidationCheck, undefinedValueLength } from './validation';
 import { Link, useHistory, Redirect } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { addToken } from '../../reducers/token';
 import { useDispatch } from 'react-redux';
-import { addToken } from '../../actions/tokenActions';
 
 const Login = () => {
     const dispatch = useDispatch()
     const history = useHistory();
     const [userEmailPhone, setUserEmailPhone] = useState('')
     const [password, setPassword] = useState('')
+    const [passwordValidate, setPasswordValidate] = useState(false)
     const token = localStorage.getItem("token")
+
+    // min 6 and max 15 character | atleast one is number | atleast one is special character
+    const passwordValidation = (e) => {
+        let Value = e.target.value
+        setPassword(Value)
+        let passwordMsg = document.getElementById("passwordMsg")
+        let regex = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,15}$/
+        if (Value) {
+            if (Value.match(regex) !== null) {
+                setPassword(Value)
+                if (checkLength(Value, 6, 15, e, passwordMsg)) {   // Value, MinValue, MaxValue, event, passwordMsg
+                    setPasswordValidate(true)
+                }
+                else {
+                    setPasswordValidate(false)
+                }
+            }
+            else {
+                setPassword(Value)
+                let msg = "** Password Incorrect"
+                MainFieldValidationCheck(e, passwordMsg, msg)
+                setPasswordValidate(false)
+            }
+        }
+        else {
+            undefinedValueLength(e, passwordMsg)
+        }
+    }
+
+    useEffect(() => {
+        if (passwordValidate) {
+            document.getElementById("loginBtn").disabled = false
+        }
+        else {
+            document.getElementById("loginBtn").disabled = true
+        }
+    }, [passwordValidate]);
 
     const submitForm = (e) => {
         e.preventDefault()
-        // let userLogin = {
-        //     "username": userEmailPhone,
-        //     "password": password
-        // }
-        let _token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9'
-        if (_token) {
-            localStorage.setItem("token", _token)
-            dispatch(addToken(_token))
-            history.push("/");
-            console.log("You have successfully logged in");
+        let userLogin = {
+            "username": userEmailPhone,
+            "password": password
         }
-        else {
-            setUserEmailPhone("")
-            setPassword("")
-            dispatch(addToken(''))
-            document.getElementById("name").focus()
-            localStorage.clear()
-            console.log("Something went wrong, Please check your internet and credentials!");
-        }
-    }
-    useEffect(() => {
-        if (!token) {
-            if ((userEmailPhone.length < 5) || (password.length < 5)) {
-                document.getElementById("liveToastBtn").disabled = true
+
+        fetch('http://127.0.0.1:8000/api/login', {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(userLogin)
+        }).then((result) => {
+            if (result.status === 200) {
+                result.json().then((response) => {
+                    let _token = response.access
+                    console.log(_token);
+                    if (_token) {
+                        localStorage.setItem("token", _token)
+                        dispatch(addToken(_token))
+                        history.push("/");
+                        console.log("You have successfully logged in");
+                    }
+                    else {
+                        setUserEmailPhone("")
+                        setPassword("")
+                        dispatch(addToken(''))
+                        document.getElementById("name").focus()
+                        localStorage.clear()
+                        console.log("Something went wrong, Please check your internet and credentials!");
+                    }
+                })
             }
             else {
-                document.getElementById("liveToastBtn").disabled = false
+                localStorage.clear()
             }
-        }
-    }, [userEmailPhone, password, token]);
+        })
+    }
+
 
     return (
         <>
@@ -58,10 +106,11 @@ const Login = () => {
 
                         <div className="mb-3">
                             <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="password" className="form-label">Password</label>
-                            <input required type="password" className="form-control" id="password" placeholder="Please type password" onChange={(e) => setPassword(e.target.value)} value={password} />
+                            <input required type="password" className="form-control" id="password" placeholder="Please type password" onChange={(e) => passwordValidation(e)} value={password} />
+                            <div id="passwordMsg"></div>
                         </div>
                         <div className="text-center">
-                            <input type="submit" value="Submit" id="liveToastBtn" className="btn btn-danger btn-sm w-25" />
+                            <input type="submit" value="Login" id="loginBtn" className="btn btn-danger btn-sm w-25" />
                         </div>
                     </form>
                     <div className="text-center">

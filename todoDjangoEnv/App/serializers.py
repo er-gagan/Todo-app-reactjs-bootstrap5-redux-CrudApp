@@ -11,7 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
         return User.objects.create_user(**validated_data)
 
 class TodosSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+    # user = UserSerializer()
     class Meta:
         model = Todos
-        fields = '__all__'
+        fields = ['id', 'Title', 'Description', 'Date']

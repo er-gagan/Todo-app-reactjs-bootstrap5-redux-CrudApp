@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
-import { addTodo } from '../../actions/todosActions'
-import cuid from 'cuid'
 import { setDatefun } from './setDateTimeModule.js'
+import { addTodo } from '../../reducers/todos.js'
+import { useDispatch } from 'react-redux'
+import React, { useState } from 'react'
+import cuid from 'cuid'
 
 const Form = () => {
     const [title, setTitle] = useState('')
@@ -11,7 +11,31 @@ const Form = () => {
     const handleFormSubmit = (e) => {
         e.preventDefault()
         let dateObj = setDatefun()
-        dispatch(addTodo({ id: cuid(), Title: title, Description: desc, Date: new Date(dateObj.yyyy, dateObj.mm, dateObj.dd, dateObj.hours, dateObj.minutes, dateObj.seconds) }))
+        let user = {
+            'id': cuid(),
+            'Title': title,
+            'Description': desc,
+            'Date': String(new Date(dateObj.yyyy, dateObj.mm, dateObj.dd, dateObj.hours, dateObj.minutes, dateObj.seconds))
+        }
+
+        fetch('http://127.0.0.1:8000/api/todos', {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                'Authorization': "Bearer " + localStorage.getItem("token")
+            },
+            body: JSON.stringify(user)
+        }).then((result) => {
+            if (result.status === 200) {
+                dispatch(addTodo(user))
+                console.log("Todo is added successfully!");
+            }
+            else {
+                console.log("Something went wrong");
+            }
+        })
+
         document.getElementById("myForm").reset();
         document.getElementById("title").focus()
     }

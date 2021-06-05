@@ -6,6 +6,7 @@ import { Redirect } from "react-router-dom";
 
 const Home = () => {
     const token = useSelector(state => state.token.data)
+
     return (
         <>
             {token ?
