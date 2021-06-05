@@ -7,6 +7,8 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Protected from './Protected';
 import NoMatchPage from './NoMatchPage';
 import Navbar from './components/Navbar/Navbar';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 function App() {
 
   return (
@@ -30,6 +32,7 @@ function App() {
         </Route>
         <Route component={NoMatchPage} />
       </Switch>
+      <ToastContainer />
     </Router>
   );
 }

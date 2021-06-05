@@ -1,3 +1,4 @@
+import { ToastContainer, toast } from 'react-toastify';
 import { setDatefun } from './setDateTimeModule.js'
 import { addTodo } from '../../reducers/todos.js'
 import { useDispatch } from 'react-redux'
@@ -8,6 +9,16 @@ const Form = () => {
     const [title, setTitle] = useState('')
     const [desc, setDesc] = useState('')
     const dispatch = useDispatch()
+
+    const notify = (type, msg, autoClose) => {
+        toast(msg, {
+            position: toast.POSITION.BOTTOM_RIGHT,
+            className: 'foo-bar',
+            autoClose: autoClose,
+            type: type,
+        });
+    }
+
     const handleFormSubmit = (e) => {
         e.preventDefault()
         let dateObj = setDatefun()
@@ -17,24 +28,28 @@ const Form = () => {
             'Description': desc,
             'Date': String(new Date(dateObj.yyyy, dateObj.mm, dateObj.dd, dateObj.hours, dateObj.minutes, dateObj.seconds))
         }
-
-        fetch('http://127.0.0.1:8000/api/todos', {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                'Authorization': "Bearer " + localStorage.getItem("token")
-            },
-            body: JSON.stringify(user)
-        }).then((result) => {
-            if (result.status === 200) {
-                dispatch(addTodo(user))
-                console.log("Todo is added successfully!");
-            }
-            else {
-                console.log("Something went wrong");
-            }
-        })
+        try {
+            fetch('http://127.0.0.1:8000/api/todos', {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    'Authorization': "Bearer " + localStorage.getItem("token")
+                },
+                body: JSON.stringify(user)
+            }).then((result) => {
+                if (result.status === 200) {
+                    dispatch(addTodo(user))
+                    notify("success", "Todo is added successfully!", 2000)
+                }
+                else {
+                    notify("error", "Something went wrong! Please check your network", 3000)
+                }
+            })
+        }
+        catch {
+            notify("error", "Something went wrong! Please check your network", 3000)
+        }
 
         document.getElementById("myForm").reset();
         document.getElementById("title").focus()
@@ -56,6 +71,7 @@ const Form = () => {
                     <button type="submit" className="btn btn-danger btn-sm w-25">Submit</button>
                 </div>
             </form>
+            <ToastContainer />
         </>
     )
 }

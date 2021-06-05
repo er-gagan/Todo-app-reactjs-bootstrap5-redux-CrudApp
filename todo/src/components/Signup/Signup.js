@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { checkPassword, checkFieldCharacters, checkLength, undefinedValueLength, InvallidEmailValue, correctCharacters, MainFieldValidationCheck, matchPasswordValid, matchPasswordInvalid } from './SignupFormValidation'
 import { Link, useHistory, Redirect } from "react-router-dom";
+import { toast } from 'react-toastify';
 
 const Signup = () => {
     const token = localStorage.getItem("token")
@@ -20,6 +21,15 @@ const Signup = () => {
     const [passwordValidate, setPasswordValidate] = useState(false)
     const [confirmPasswordValidate, setConfirmPasswordValidate] = useState(false)
     const [genderValidate, setGenderValidate] = useState(false)
+
+    const notify = (type, msg, autoClose) => {
+        toast(msg, {
+            position: toast.POSITION.BOTTOM_RIGHT,
+            className: 'foo-bar',
+            autoClose: autoClose,
+            type: type,
+        });
+    }
 
     useEffect(() => {
         if (!token) {
@@ -220,12 +230,12 @@ const Signup = () => {
             if (result.status === 201) {
                 result.json().then((response) => {
                     console.log(response)
-                    console.log("Successfully Signed up!");
                     history.push('/login')
+                    notify("success", "You have successfully Signed up!", 5000)
                 })
             }
             else {
-                console.log("Something went wrong");
+                notify("error", "Something went wrong, Please check your internet!", 5000)
             }
         })
     }

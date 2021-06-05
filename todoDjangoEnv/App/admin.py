@@ -8,3 +8,7 @@ class UserAdmin(admin.ModelAdmin):
 @admin.register(Todos)
 class TodosAdmin(admin.ModelAdmin):
     list_display = ['Title', 'user']
+
+@admin.register(OtpVerify)
+class OtpVerifyAdmin(admin.ModelAdmin):
+    list_display = ['otp', 'user']

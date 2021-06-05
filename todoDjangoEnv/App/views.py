@@ -1,15 +1,17 @@
-from datetime import date
-from rest_framework import response
-from .models import *
-from django.db.models import Q
-from rest_framework import status
-from rest_framework.views import APIView
-from .serializers import *
-from rest_framework.response import Response
-from rest_framework.reverse import reverse
-from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.backends import TokenBackend
+from rest_framework.permissions import IsAuthenticated
+from todoBackend.settings import EMAIL_HOST_USER
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
+from rest_framework.views import APIView
+from django.core.mail import send_mail
+from rest_framework import status
+from django.db.models import Q
+from .serializers import *
+from .models import *
+import random, string
+
 # from rest_framework_simplejwt.tokens import RefreshToken  # generate jwt manually
 
 
@@ -93,6 +95,66 @@ class UserView(APIView):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'Exception': str(e)}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+
+def emailSend(otp, email):
+    subject = 'Welcome to Todo App'
+    message = 'OTP = '+str(otp)+"\nThis is a valid otp"
+    recepient = email
+    send_mail(subject, message, EMAIL_HOST_USER,[recepient], fail_silently=False)
+
+
+class forgot_password_email_verification_View(APIView):
+    def post(self, request):
+        try:
+            email = request.data['email']
+            user = User.objects.get(email=email)
+            if user:
+                otp = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6))
+                # Otp sent on email written logic
+                OtpVerify.objects.filter(user=user).delete()
+                OtpVerify(user=user, otp=otp).save()
+
+                emailSend(otp, email)
+                return Response(status=status.HTTP_202_ACCEPTED)
+            else:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class forgot_password_otp_verification_View(APIView):
+    def post(self, request):
+        try:
+            otp = request.data['otp']
+            email = request.data['email']
+            user = User.objects.get(email=email)
+
+            verifyOtp = OtpVerify.objects.get(Q(otp=otp) & Q(user=user))
+            if verifyOtp:
+                return Response(status=status.HTTP_202_ACCEPTED)
+            else:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class forgot_password_with_new_password_View(APIView):
+    def post(self, request):
+        otp = request.data['otp']
+        email = request.data['email']
+        password = request.data['password']
+
+        user = User.objects.get(email=email)
+
+        verifyOtp = OtpVerify.objects.get(Q(otp=otp) & Q(user=user))
+        if verifyOtp:
+            user.set_password(password)
+            user.save()
+            verifyOtp.delete()
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class ApiRoot(APIView):

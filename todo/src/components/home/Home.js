@@ -17,9 +17,10 @@ const Home = () => {
                         <Card />
                     </div>
                 </div>
-                : 
+                :
                 <Redirect to="/login" />
             }
+            
         </>
     )
 }

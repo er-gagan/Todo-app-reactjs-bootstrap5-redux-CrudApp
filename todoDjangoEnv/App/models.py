@@ -18,4 +18,11 @@ class Todos(models.Model):
     def __str__(self):
         return self.Title
 
+class OtpVerify(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    otp = models.CharField(max_length=6)
+
+    def __str__(self):
+        return self.user+self.otp
+        
 # superuser: gagan

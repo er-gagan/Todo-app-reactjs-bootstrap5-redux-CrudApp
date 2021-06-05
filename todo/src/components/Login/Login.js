@@ -3,6 +3,7 @@ import { Link, useHistory, Redirect } from "react-router-dom";
 import React, { useState, useEffect } from 'react';
 import { addToken } from '../../reducers/token';
 import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 
 const Login = () => {
     const dispatch = useDispatch()
@@ -11,6 +12,15 @@ const Login = () => {
     const [password, setPassword] = useState('')
     const [passwordValidate, setPasswordValidate] = useState(false)
     const token = localStorage.getItem("token")
+
+    const notify = (type, msg, autoClose) => {
+        toast(msg, {
+            position: toast.POSITION.BOTTOM_RIGHT,
+            className: 'foo-bar',
+            autoClose: autoClose,
+            type: type,
+        });
+    }
 
     // min 6 and max 15 character | atleast one is number | atleast one is special character
     const passwordValidation = (e) => {
@@ -72,7 +82,7 @@ const Login = () => {
                         localStorage.setItem("token", _token)
                         dispatch(addToken(_token))
                         history.push("/");
-                        console.log("You have successfully logged in");
+                        notify("success", "You have successfully logged in", 5000)
                     }
                     else {
                         setUserEmailPhone("")
@@ -80,7 +90,7 @@ const Login = () => {
                         dispatch(addToken(''))
                         document.getElementById("name").focus()
                         localStorage.clear()
-                        console.log("Something went wrong, Please check your internet and credentials!");
+                        notify("error", "Something went wrong, Please check your internet and credentials!", 5000)
                     }
                 })
             }

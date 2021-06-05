@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
 import { addTodo, deleteTodo, updateTodo } from '../../reducers/todos.js'
 import { setDatefun, setTimefun, Datefun } from './setDateTimeModule.js'
-
+import { toast } from 'react-toastify';
+import { useSelector, useDispatch } from 'react-redux'
+import React, { useState, useEffect } from 'react'
 const Card = () => {
     const dispatch = useDispatch()
     const [id, setId] = useState('')
@@ -12,27 +12,42 @@ const Card = () => {
     const [time, setTime] = useState('')
     const [searchTodos, setSearchTodos] = useState('')
 
+    const notify = (type, msg, autoClose) => {
+        toast(msg, {
+            position: toast.POSITION.BOTTOM_RIGHT,
+            className: 'foo-bar',
+            autoClose: autoClose,
+            type: type,
+        });
+    }
+
+
     useEffect(() => {
-        fetch('http://127.0.0.1:8000/api/todos', {
-            method: "GET",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                'Authorization': "Bearer " + localStorage.getItem("token")
-            },
-        }).then((result) => {
-            if (result.status === 200) {
-                result.json().then((response) => {
-                    response.map(todo => {
-                        dispatch(addTodo(todo))
-                        return true
+        try {
+            fetch('http://127.0.0.1:8000/api/todos', {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    'Authorization': "Bearer " + localStorage.getItem("token")
+                },
+            }).then((result) => {
+                if (result.status === 200) {
+                    result.json().then((response) => {
+                        response.map(todo => {
+                            dispatch(addTodo(todo))
+                            return true
+                        })
                     })
-                })
-            }
-            else {
-                console.log("Something went wrong");
-            }
-        })
+                }
+                else {
+                    notify("error", "Something went wrong! Please check your network", 3000)
+                }
+            })
+        }
+        catch {
+            notify("error", "Something went wrong! Please check your network", 3000)
+        }
     }, [dispatch]);
 
     const todos = useSelector((state) => state.todos.data);
@@ -46,23 +61,28 @@ const Card = () => {
     }
 
     const deletebtn = (id) => {
-        fetch('http://127.0.0.1:8000/api/todos', {
-            method: "DELETE",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                'Authorization': "Bearer " + localStorage.getItem("token")
-            },
-            body: JSON.stringify({ 'id': id })
-        }).then((result) => {
-            if (result.status === 200) {
-                dispatch(deleteTodo(id))
-                console.log("Todo is deleted successfully!");
-            }
-            else {
-                console.log("Something went wrong");
-            }
-        })
+        try {
+            fetch('http://127.0.0.1:8000/api/todos', {
+                method: "DELETE",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    'Authorization': "Bearer " + localStorage.getItem("token")
+                },
+                body: JSON.stringify({ 'id': id })
+            }).then((result) => {
+                if (result.status === 200) {
+                    dispatch(deleteTodo(id))
+                    notify("success", "Todo is deleted successfully!", 2000)
+                }
+                else {
+                    notify("error", "Something went wrong! Please check your network", 3000)
+                }
+            })
+        }
+        catch {
+            notify("error", "Something went wrong! Please check your network", 3000)
+        }
     }
 
     const todoUpdate = () => {
@@ -77,25 +97,28 @@ const Card = () => {
             'Date': String(new Date(dateObj.yyyy, dateObj.mm, dateObj.dd, dateObj.hours, dateObj.minutes, dateObj.seconds))
         }
 
-        fetch('http://127.0.0.1:8000/api/todos', {
-            method: "PUT",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                'Authorization': "Bearer " + localStorage.getItem("token")
-            },
-            body: JSON.stringify(updatedTodo)
-        }).then((result) => {
-            if (result.status === 200) {
-                dispatch(updateTodo(updatedTodo))
-                console.log("Todo is updated successfully!");
-            }
-            else {
-                console.log("Something went wrong");
-            }
-        })
-
-
+        try {
+            fetch('http://127.0.0.1:8000/api/todos', {
+                method: "PUT",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    'Authorization': "Bearer " + localStorage.getItem("token")
+                },
+                body: JSON.stringify(updatedTodo)
+            }).then((result) => {
+                if (result.status === 200) {
+                    dispatch(updateTodo(updatedTodo))
+                    notify("success", "Todo is updated successfully!", 2000)
+                }
+                else {
+                    notify("error", "Something went wrong! Please check your network", 3000)
+                }
+            })
+        }
+        catch {
+            notify("error", "Something went wrong! Please check your network", 3000)
+        }
     }
 
     const mySortedTodos = todos.slice().sort((a, b) => new Date(b.Date) - new Date(a.Date)) // sort todos date and time wise
@@ -167,6 +190,7 @@ const Card = () => {
                     </div>
                 </div>
                 {taskItems}
+                {/* <ToastContainer /> */}
             </>
         )
     }
