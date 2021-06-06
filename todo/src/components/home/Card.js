@@ -1,9 +1,13 @@
-import { addTodo, deleteTodo, updateTodo } from '../../reducers/todos.js'
+import { addTodo, deleteAllTodos, deleteTodo, updateTodo } from '../../reducers/todos.js'
 import { setDatefun, setTimefun, Datefun } from './setDateTimeModule.js'
-import { toast } from 'react-toastify';
 import { useSelector, useDispatch } from 'react-redux'
-import React, { useState, useEffect } from 'react'
+import { addToken } from '../../reducers/token.js';
+import React, { useState, useEffect, useCallback } from 'react'
+import { useHistory } from 'react-router-dom';
+import { toast } from 'react-toastify';
+
 const Card = () => {
+    const history = useHistory()
     const dispatch = useDispatch()
     const [id, setId] = useState('')
     const [title, setTitle] = useState('')
@@ -21,6 +25,13 @@ const Card = () => {
         });
     }
 
+    const logOut = useCallback(() => {
+        localStorage.clear()
+        dispatch(deleteAllTodos([]))
+        dispatch(addToken(null))
+        history.push("/login");
+        notify("warning", "Something went wrong! Please check your network and re-loggin", 3000)
+    },[dispatch, history])
 
     useEffect(() => {
         try {
@@ -41,14 +52,14 @@ const Card = () => {
                     })
                 }
                 else {
-                    notify("error", "Something went wrong! Please check your network", 3000)
+                    logOut()
                 }
             })
         }
         catch {
-            notify("error", "Something went wrong! Please check your network", 3000)
+            logOut()
         }
-    }, [dispatch]);
+    }, [dispatch, logOut]);
 
     const todos = useSelector((state) => state.todos.data);
 
@@ -76,12 +87,12 @@ const Card = () => {
                     notify("success", "Todo is deleted successfully!", 2000)
                 }
                 else {
-                    notify("error", "Something went wrong! Please check your network", 3000)
+                    logOut()
                 }
             })
         }
         catch {
-            notify("error", "Something went wrong! Please check your network", 3000)
+            logOut()
         }
     }
 
@@ -112,12 +123,12 @@ const Card = () => {
                     notify("success", "Todo is updated successfully!", 2000)
                 }
                 else {
-                    notify("error", "Something went wrong! Please check your network", 3000)
+                    logOut()
                 }
             })
         }
         catch {
-            notify("error", "Something went wrong! Please check your network", 3000)
+            logOut()
         }
     }
 

@@ -23,7 +23,7 @@ const Navbar = () => {
     const logOut = () => {
         localStorage.clear()
         dispatch(deleteAllTodos([]))
-        dispatch(addToken(''))
+        dispatch(addToken(null))
         history.push("/login");
         notify("success", "Successfully logged out!", 5000)
     }

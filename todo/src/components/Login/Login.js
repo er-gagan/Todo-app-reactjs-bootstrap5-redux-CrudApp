@@ -1,9 +1,10 @@
 import { checkLength, MainFieldValidationCheck, undefinedValueLength } from './validation';
-import { Link, useHistory, Redirect } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import React, { useState, useEffect } from 'react';
 import { addToken } from '../../reducers/token';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
+import { deleteAllTodos } from '../../reducers/todos';
 
 const Login = () => {
     const dispatch = useDispatch()
@@ -11,7 +12,6 @@ const Login = () => {
     const [userEmailPhone, setUserEmailPhone] = useState('')
     const [password, setPassword] = useState('')
     const [passwordValidate, setPasswordValidate] = useState(false)
-    const token = localStorage.getItem("token")
 
     const notify = (type, msg, autoClose) => {
         toast(msg, {
@@ -20,6 +20,14 @@ const Login = () => {
             autoClose: autoClose,
             type: type,
         });
+    }
+
+    const logOut = () => {
+        localStorage.clear()
+        dispatch(deleteAllTodos([]))
+        dispatch(addToken(null))
+        history.push("/login");
+        notify("warning", "Something went wrong, Please check your internet and credentials!", 3000)
     }
 
     // min 6 and max 15 character | atleast one is number | atleast one is special character
@@ -65,70 +73,66 @@ const Login = () => {
             "username": userEmailPhone,
             "password": password
         }
+        try {
+            fetch('http://127.0.0.1:8000/api/login', {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(userLogin)
+            }).then((result) => {
+                if (result.status === 200) {
+                    result.json().then((response) => {
+                        let _token = response.access
+                        if (_token) {
+                            localStorage.setItem("token", _token)
+                            dispatch(addToken(_token))
+                            history.push("/");
+                            notify("success", "You have successfully logged in", 5000)
+                        }
+                        else {
+                            logOut()
+                            setUserEmailPhone("")
+                            setPassword("")
+                            document.getElementById("name").focus()
 
-        fetch('http://127.0.0.1:8000/api/login', {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(userLogin)
-        }).then((result) => {
-            if (result.status === 200) {
-                result.json().then((response) => {
-                    let _token = response.access
-                    console.log(_token);
-                    if (_token) {
-                        localStorage.setItem("token", _token)
-                        dispatch(addToken(_token))
-                        history.push("/");
-                        notify("success", "You have successfully logged in", 5000)
-                    }
-                    else {
-                        setUserEmailPhone("")
-                        setPassword("")
-                        dispatch(addToken(''))
-                        document.getElementById("name").focus()
-                        localStorage.clear()
-                        notify("error", "Something went wrong, Please check your internet and credentials!", 5000)
-                    }
-                })
-            }
-            else {
-                localStorage.clear()
-            }
-        })
+                        }
+                    })
+                }
+                else {
+                    logOut()
+                }
+            })
+        }
+        catch {
+            logOut()
+        }
     }
 
 
     return (
-        <>
-            {token ?
-                <Redirect to="/" />
-                :
-                <div className="container my-2">
-                    <h3>Login Form</h3>
-                    <form onSubmit={submitForm} id="myForm1">
-                        <div className="mb-3">
-                            <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="name" className="form-label">Enter Username, Email or Phone</label>
-                            <input required autoFocus type="text" className="form-control" id="name" placeholder="Please type your username, email or phone" onChange={(e) => setUserEmailPhone(e.target.value)} value={userEmailPhone} />
-                        </div>
-
-                        <div className="mb-3">
-                            <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="password" className="form-label">Password</label>
-                            <input required type="password" className="form-control" id="password" placeholder="Please type password" onChange={(e) => passwordValidation(e)} value={password} />
-                            <div id="passwordMsg"></div>
-                        </div>
-                        <div className="text-center">
-                            <input type="submit" value="Login" id="loginBtn" className="btn btn-danger btn-sm w-25" />
-                        </div>
-                    </form>
-                    <div className="text-center">
-                        <Link to="/signup">You don't have an account? Sign up</Link>
-                    </div>
+        <div className="container my-2">
+            <h3>Login Form</h3>
+            <form onSubmit={submitForm} id="myForm1">
+                <div className="mb-3">
+                    <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="name" className="form-label">Enter Username, Email or Phone</label>
+                    <input required autoFocus type="text" className="form-control" id="name" placeholder="Please type your username, email or phone" onChange={(e) => setUserEmailPhone(e.target.value)} value={userEmailPhone} />
                 </div>
-            }
-        </>
+
+                <div className="mb-3">
+                    <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="password" className="form-label">Password</label>
+                    <input required type="password" className="form-control" id="password" placeholder="Please type password" onChange={(e) => passwordValidation(e)} value={password} />
+                    <div id="passwordMsg"></div>
+                </div>
+                <div className="text-center">
+                    <input type="submit" value="Login" id="loginBtn" className="btn btn-danger btn-sm w-25" />
+                </div>
+            </form>
+            <div className="text-center">
+                <Link to="/signup">You don't have an account? Sign up</Link>
+            </div>
+        </div>
     )
 }
 

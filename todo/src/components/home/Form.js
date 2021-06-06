@@ -1,11 +1,14 @@
+import { addTodo, deleteAllTodos } from '../../reducers/todos.js'
 import { ToastContainer, toast } from 'react-toastify';
 import { setDatefun } from './setDateTimeModule.js'
-import { addTodo } from '../../reducers/todos.js'
+import { addToken } from '../../reducers/token.js';
+import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux'
 import React, { useState } from 'react'
 import cuid from 'cuid'
 
 const Form = () => {
+    const history = useHistory()
     const [title, setTitle] = useState('')
     const [desc, setDesc] = useState('')
     const dispatch = useDispatch()
@@ -17,6 +20,14 @@ const Form = () => {
             autoClose: autoClose,
             type: type,
         });
+    }
+
+    const logOut = () => {
+        localStorage.clear()
+        dispatch(deleteAllTodos([]))
+        dispatch(addToken(null))
+        history.push("/login");
+        notify("warning", "Something went wrong! Please check your network", 3000)
     }
 
     const handleFormSubmit = (e) => {
@@ -43,12 +54,12 @@ const Form = () => {
                     notify("success", "Todo is added successfully!", 2000)
                 }
                 else {
-                    notify("error", "Something went wrong! Please check your network", 3000)
+                    logOut()
                 }
             })
         }
         catch {
-            notify("error", "Something went wrong! Please check your network", 3000)
+            logOut()
         }
 
         document.getElementById("myForm").reset();

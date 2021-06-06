@@ -1,16 +1,16 @@
-import Home from './components/home/Home';
-import Login from './components/Login/Login';
-import Signup from './components/Signup/Signup';
+import RESTRICT_AFTER_LOGGED_IN_COMPONENT from './RESTRICT_AFTER_LOGGED_IN_COMPONENT';
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import ChangePassword from './components/ChangePassword/ChangePassword';
 import ForgotPassword from './components/ForgotPassword/ForgotPassword';
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import Protected from './Protected';
-import NoMatchPage from './NoMatchPage';
+import Signup from './components/Signup/Signup';
 import Navbar from './components/Navbar/Navbar';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Login from './components/Login/Login';
+import Home from './components/home/Home';
+import NoMatchPage from './NoMatchPage';
+import Protected from './Protected';
 function App() {
-
   return (
     <Router>
       <Navbar />
@@ -22,13 +22,13 @@ function App() {
           <Protected component={ChangePassword} />
         </Route>
         <Route exact path="/login">
-          <Login />
+          <RESTRICT_AFTER_LOGGED_IN_COMPONENT component={Login} />
         </Route>
         <Route exact path="/signup">
-          <Signup />
+          <RESTRICT_AFTER_LOGGED_IN_COMPONENT component={Signup} />
         </Route>
         <Route exact path="/forgotPassword">
-          <ForgotPassword />
+          <RESTRICT_AFTER_LOGGED_IN_COMPONENT component={ForgotPassword} />
         </Route>
         <Route component={NoMatchPage} />
       </Switch>
