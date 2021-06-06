@@ -10,7 +10,8 @@ from rest_framework import status
 from django.db.models import Q
 from .serializers import *
 from .models import *
-import random, string
+import random
+import string
 
 # from rest_framework_simplejwt.tokens import RefreshToken  # generate jwt manually
 
@@ -84,6 +85,26 @@ class ToDoAppViews(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+class changePasswordView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            user = get_user_info(request)
+            currentPassword = request.data['currentPassword']
+            newPassword = request.data['newPassword']
+            password = user.check_password(currentPassword)
+            if password:
+                user.set_password(newPassword)
+                user.save()
+                return Response(status=status.HTTP_202_ACCEPTED)
+            else:
+                return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
 class UserView(APIView):
     def post(self, request):   # user register
         try:
@@ -101,7 +122,8 @@ def emailSend(otp, email):
     subject = 'Welcome to Todo App'
     message = 'OTP = '+str(otp)+"\nThis is a valid otp"
     recepient = email
-    send_mail(subject, message, EMAIL_HOST_USER,[recepient], fail_silently=False)
+    send_mail(subject, message, EMAIL_HOST_USER,
+              [recepient], fail_silently=False)
 
 
 class forgot_password_email_verification_View(APIView):
@@ -110,7 +132,8 @@ class forgot_password_email_verification_View(APIView):
             email = request.data['email']
             user = User.objects.get(email=email)
             if user:
-                otp = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6))
+                otp = ''.join(random.choice(
+                    string.ascii_uppercase + string.digits) for _ in range(6))
                 # Otp sent on email written logic
                 OtpVerify.objects.filter(user=user).delete()
                 OtpVerify(user=user, otp=otp).save()

@@ -7,6 +7,8 @@ urlpatterns = [
     path('todos', ToDoAppViews.as_view(), name="todos"),
     path('register', UserView.as_view(), name="register"),
     path('login', TokenObtainPairView.as_view(), name='login'),
+
+    path('change_password', changePasswordView.as_view(), name='change_password'),
     
     path('forgot_password_email_verification', forgot_password_email_verification_View.as_view(), name='forgot_password_email_verification'),
     

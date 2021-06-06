@@ -1,6 +1,15 @@
-import React, { useState, useEffect } from 'react'
 import { MainFieldValidationCheck, checkLength, undefinedValueLength, matchPasswordValid, matchPasswordInvalid } from './Validation'
+import { deleteAllTodos } from '../../reducers/todos'
+import React, { useState, useEffect } from 'react'
+import { addToken } from '../../reducers/token'
+import { useHistory } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { toast } from 'react-toastify'
+
 const ChangePassword = () => {
+    const dispatch = useDispatch()
+    const history = useHistory()
+
     const [currentPassword, setCurrentPassword] = useState('')
     const [newPassword, setNewPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
@@ -8,6 +17,23 @@ const ChangePassword = () => {
     const [currentPasswordValidate, setCurrentPasswordValidate] = useState(false)
     const [newPasswordValidate, setNewPasswordValidate] = useState(false)
     const [confirmPasswordValidate, setConfirmPasswordValidate] = useState(false)
+
+    const notify = (type, msg, autoClose) => {
+        toast(msg, {
+            position: toast.POSITION.BOTTOM_RIGHT,
+            className: 'foo-bar',
+            autoClose: autoClose,
+            type: type,
+        });
+    }
+
+    const logOut = () => {
+        localStorage.clear()
+        dispatch(deleteAllTodos([]))
+        dispatch(addToken(null))
+        history.push("/login");
+        notify("warning", "Something went wrong, May be network issue or session expiry!", 5000)
+    }
 
     // min 6 and max 15 character | atleast one is number | atleast one is special character
     const currentPasswordValidation = (e) => {
@@ -112,7 +138,31 @@ const ChangePassword = () => {
 
     const submitForm = (e) => {
         e.preventDefault()
-        console.log(currentPassword, newPassword);
+        const passwordCredentials = {
+            "currentPassword": currentPassword,
+            "newPassword": newPassword
+        }
+        try {
+            fetch('http://127.0.0.1:8000/api/change_password', {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    'Authorization': "Bearer " + localStorage.getItem("token")
+                },
+                body: JSON.stringify(passwordCredentials)
+            }).then((result) => {
+                if (result.status === 202) {
+                    notify("success", `Password has successfully Changed!`, 4000)
+                }
+                else {
+                    notify("error", `Something went wrong! Maybe invallid current password or network issue occurd!`, 5000)
+                }
+            })
+        }
+        catch {
+            logOut()
+        }
     }
 
     return (
