@@ -2,7 +2,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.backends import TokenBackend
 from rest_framework.permissions import IsAuthenticated
 from django.views.decorators.csrf import csrf_exempt
-from todoBackend.settings import EMAIL_HOST_USER
+from customUser.settings import EMAIL_HOST_USER
 from django.http.response import HttpResponse
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
@@ -17,7 +17,6 @@ import string
 import uuid
 
 # from rest_framework_simplejwt.tokens import RefreshToken  # generate jwt manually
-
 
 def get_user_info(request):
     token = request.META.get('HTTP_AUTHORIZATION', " ").split(' ')[1]
