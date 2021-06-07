@@ -5,7 +5,10 @@ from .views import *
 urlpatterns = [
     path('', ApiRoot.as_view(), name='root'),
     path('todos', ToDoAppViews.as_view(), name="todos"),
+    
     path('register', UserView.as_view(), name="register"),
+    path('verify/<auth_token>', VerifyAccount, name="VerifyAccount"),
+
     path('login', TokenObtainPairView.as_view(), name='login'),
 
     path('change_password', changePasswordView.as_view(), name='change_password'),

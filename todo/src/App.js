@@ -10,6 +10,8 @@ import Login from './components/Login/Login';
 import Home from './components/home/Home';
 import NoMatchPage from './NoMatchPage';
 import Protected from './Protected';
+import VerifiedUser from './components/VerifiedUser/VerifiedUser';
+
 function App() {
   return (
     <Router>
@@ -27,6 +29,10 @@ function App() {
         <Route exact path="/signup">
           <RESTRICT_AFTER_LOGGED_IN_COMPONENT component={Signup} />
         </Route>
+        
+        <Route exact path="/verify/:auth_token" render={(props)=><VerifiedUser {...props} />}>
+        </Route>
+
         <Route exact path="/forgotPassword">
           <RESTRICT_AFTER_LOGGED_IN_COMPONENT component={ForgotPassword} />
         </Route>

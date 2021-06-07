@@ -1,4 +1,4 @@
-import { checkLength, MainFieldValidationCheck, undefinedValueLength } from './validation';
+import { checkLength, MainFieldValidationCheck, undefinedValueLength, passwordEyeValidation } from './validation';
 import { Link, useHistory } from "react-router-dom";
 import React, { useState, useEffect } from 'react';
 import { addToken } from '../../reducers/token';
@@ -110,21 +110,28 @@ const Login = () => {
         }
     }
 
+    useEffect(() => {
+        passwordEyeValidation()
+    }, [])
+
 
     return (
         <div className="container my-2">
             <h3>Login Form</h3>
             <form onSubmit={submitForm} id="myForm1">
+
                 <div className="mb-3">
                     <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="name" className="form-label">Enter Username, Email or Phone</label>
                     <input required autoFocus type="text" className="form-control" id="name" placeholder="Please type your username, email or phone" onChange={(e) => setUserEmailPhone(e.target.value)} value={userEmailPhone} />
                 </div>
 
-                <div className="mb-3">
-                    <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="password" className="form-label">Password</label>
-                    <input required type="password" className="form-control" id="password" placeholder="Please type password" onChange={(e) => passwordValidation(e)} value={password} />
+                <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="password" className="form-label">Password</label>
+                <div className="mb-3 input-group">
+                    <input required type="password" style={{ borderRight: "0px", borderRadius: "5px" }} className="form-control" id="password" placeholder="Please type password" onChange={(e) => passwordValidation(e)} value={password} aria-label="Password" aria-describedby="eye" />
+                    <span className="input-group-text" id="eye" style={{ backgroundColor: "#ffffff", borderRadius: "5px", borderLeft: "0px" }}><i className="bi bi-eye" id="eyeIcon"></i></span>
                     <div id="passwordMsg"></div>
                 </div>
+
                 <div className="text-center">
                     <input type="submit" value="Login" id="loginBtn" className="btn btn-danger btn-sm w-25" />
                 </div>

@@ -1,4 +1,4 @@
-import { checkPassword, checkFieldCharacters, checkLength, undefinedValueLength, InvallidEmailValue, correctCharacters, MainFieldValidationCheck, matchPasswordValid, matchPasswordInvalid } from './SignupFormValidation'
+import { checkPassword, checkFieldCharacters, checkLength, undefinedValueLength, InvallidEmailValue, correctCharacters, MainFieldValidationCheck, matchPasswordValid, matchPasswordInvalid, passwordEyeValidation, confirmPasswordEyeValidation } from './SignupFormValidation'
 import { deleteAllTodos } from '../../reducers/todos';
 import { Link, useHistory } from "react-router-dom";
 import React, { useState, useEffect } from 'react'
@@ -216,6 +216,11 @@ const Signup = () => {
         setGenderValidate(true)
     }
 
+    useEffect(() => {
+        passwordEyeValidation()
+        confirmPasswordEyeValidation()
+    }, []);
+
     const submitForm = (e) => {
         e.preventDefault()
         let user = {
@@ -237,11 +242,8 @@ const Signup = () => {
                 body: JSON.stringify(user)
             }).then((result) => {
                 if (result.status === 201) {
-                    result.json().then((response) => {
-                        console.log(response)
-                        history.push('/login')
-                        notify("success", "You have successfully Signed up!", 5000)
-                    })
+                    history.push('/login')
+                    notify("success", "You have successfully Signed up, Please check your email, we sent a mail to verify your email and after successfully verified then login.", 7000)
                 }
                 else {
                     notify("error", "Something went wrong, Please check your internet!", 5000)
@@ -291,16 +293,23 @@ const Signup = () => {
                     </div>
 
                     <div className="col-md-6">
-                        <div className="mb-3">
-                            <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="pass1" className="form-label">Password</label>
-                            <input required type="password" className="form-control" id="pass1" placeholder="Enter a unique password" onChange={(e) => passwordValidation(e)} value={password} />
+                        <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="pass1" className="form-label">Password</label>
+                        <div className="mb-3 input-group">
+                            <input required type="password" style={{ borderRight: "0px", borderRadius: "5px" }} className="form-control" id="pass1" placeholder="Enter a unique password" onChange={(e) => passwordValidation(e)} value={password} aria-label="Password" aria-describedby="passwordEye" />
+                            <span className="input-group-text" id="passwordEye" style={{ backgroundColor: "#ffffff", borderRadius: "5px", borderLeft: "0px" }}>
+                                <i className="bi bi-eye" id="passwordEyeIcon"></i>
+                            </span>
                             <div id="passwordMsg"></div>
                         </div>
                     </div>
+
                     <div className="col-md-6">
-                        <div className="mb-3">
-                            <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="pass2" className="form-label">Confirm Password</label>
-                            <input required type="password" className="form-control" id="pass2" placeholder="Re-type password" onChange={(e) => confirmPasswordValidation(e)} value={confirmPassword} />
+                        <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="pass2" className="form-label">Confirm Password</label>
+                        <div className="mb-3 input-group">
+                            <input required type="password" style={{ borderRight: "0px", borderRadius: "5px" }} className="form-control" id="pass2" placeholder="Re-type password" onChange={(e) => confirmPasswordValidation(e)} value={confirmPassword} aria-label="Confirm Password" aria-describedby="confirmPasswordEye" />
+                            <span className="input-group-text" id="confirmPasswordEye" style={{ backgroundColor: "#ffffff", borderRadius: "5px", borderLeft: "0px" }}>
+                                <i className="bi bi-eye" id="confirmPasswordEyeIcon"></i>
+                            </span>
                             <div id="confirmPasswordMsg"></div>
                         </div>
                     </div>

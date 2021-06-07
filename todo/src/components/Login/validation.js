@@ -33,19 +33,19 @@ const somethingWentWrong = (e, nameMsg) => {
 const checkLength = (Value, MinVal, MaxVal, e, nameMsg) => {
     if (Value.length < MinVal) {
         MinCharactersAllowed(e, nameMsg, MinVal)
-        return(false)
+        return (false)
     }
     else if (Value.length >= MinVal && Value.length <= MaxVal) {
         correctCharacters(e, nameMsg)
-        return(true)
+        return (true)
     }
     else if (Value.length > MaxVal) {
         MaxCharactersAllowed(e, nameMsg, MaxVal)
-        return(false)
+        return (false)
     }
     else {
         somethingWentWrong(e, nameMsg)
-        return(false)
+        return (false)
     }
 }
 
@@ -65,4 +65,24 @@ const undefinedValueLength = (e, nameMsg) => {
     nameMsg.innerText = ""
 }
 
-export {checkLength, MainFieldValidationCheck, undefinedValueLength}
+const passwordEyeValidation = () => {
+    let passwordState = false
+    let InputPassword = document.getElementById("password")
+    let eye = document.getElementById("eye")
+    let eyeIcon = document.getElementById("eyeIcon")
+    eye.style.cursor = "pointer"
+    eye.addEventListener("click", () => {
+        if (passwordState) {
+            InputPassword.setAttribute("type", "password")
+            eyeIcon.classList = "bi bi-eye"
+            passwordState = false
+        }
+        else {
+            InputPassword.setAttribute("type", "text")
+            eyeIcon.classList = "bi bi-eye-fill"
+            passwordState = true
+        }
+    })
+}
+
+export { checkLength, MainFieldValidationCheck, undefinedValueLength, passwordEyeValidation }

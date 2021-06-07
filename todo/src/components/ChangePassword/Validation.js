@@ -85,4 +85,64 @@ const matchPasswordInvalid = (matchPassword, pass1, pass2) => {
     matchPassword.innerText = "** Password doesn't match"
 }
 
-export { MainFieldValidationCheck, checkLength, undefinedValueLength, matchPasswordValid, matchPasswordInvalid }
+const currentPasswordEyeValidation = () => {
+    let currentPasswordState = false
+    let currPass = document.getElementById("currPass")
+    let currentPasswordEye = document.getElementById("currentPasswordEye")
+    let currentPasswordEyeIcon = document.getElementById("currentPasswordEyeIcon")
+    currentPasswordEye.style.cursor = "pointer"
+    currentPasswordEye.addEventListener("click", () => {
+        if (currentPasswordState) {
+            currPass.setAttribute("type", "password")
+            currentPasswordEyeIcon.classList = "bi bi-eye"
+            currentPasswordState = false
+        }
+        else {
+            currPass.setAttribute("type", "text")
+            currentPasswordEyeIcon.classList = "bi bi-eye-fill"
+            currentPasswordState = true
+        }
+    })
+}
+
+const newPasswordEyeValidation = () =>{
+    let currentPasswordState = false
+    let currPass = document.getElementById("newPass1")
+    let currentPasswordEye = document.getElementById("newPasswordEye")
+    let currentPasswordEyeIcon = document.getElementById("newPasswordEyeIcon")
+    currentPasswordEye.style.cursor = "pointer"
+    currentPasswordEye.addEventListener("click", () => {
+        if (currentPasswordState) {
+            currPass.setAttribute("type", "password")
+            currentPasswordEyeIcon.classList = "bi bi-eye"
+            currentPasswordState = false
+        }
+        else {
+            currPass.setAttribute("type", "text")
+            currentPasswordEyeIcon.classList = "bi bi-eye-fill"
+            currentPasswordState = true
+        }
+    })
+}
+
+const confirmPasswordEyeValidation = () =>{
+    let currentPasswordState = false
+    let currPass = document.getElementById("newPass2")
+    let currentPasswordEye = document.getElementById("confirmPasswordEye")
+    let currentPasswordEyeIcon = document.getElementById("confirmPasswordEyeIcon")
+    currentPasswordEye.style.cursor = "pointer"
+    currentPasswordEye.addEventListener("click", () => {
+        if (currentPasswordState) {
+            currPass.setAttribute("type", "password")
+            currentPasswordEyeIcon.classList = "bi bi-eye"
+            currentPasswordState = false
+        }
+        else {
+            currPass.setAttribute("type", "text")
+            currentPasswordEyeIcon.classList = "bi bi-eye-fill"
+            currentPasswordState = true
+        }
+    })
+}
+
+export { MainFieldValidationCheck, checkLength, undefinedValueLength, matchPasswordValid, matchPasswordInvalid, currentPasswordEyeValidation, newPasswordEyeValidation, confirmPasswordEyeValidation }

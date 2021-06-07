@@ -6,6 +6,7 @@ class User(AbstractUser):
     name=models.CharField(max_length=100)
     phone = models.CharField(max_length=15)
     gender = models.CharField(max_length=10)
+    auth_token = models.CharField(max_length=100)
 
 
 class Todos(models.Model):

@@ -1,4 +1,4 @@
-import { MainFieldValidationCheck, checkLength, undefinedValueLength, matchPasswordValid, matchPasswordInvalid } from './Validation'
+import { MainFieldValidationCheck, checkLength, undefinedValueLength, matchPasswordValid, matchPasswordInvalid, currentPasswordEyeValidation, newPasswordEyeValidation, confirmPasswordEyeValidation } from './Validation'
 import { deleteAllTodos } from '../../reducers/todos'
 import React, { useState, useEffect } from 'react'
 import { addToken } from '../../reducers/token'
@@ -136,6 +136,15 @@ const ChangePassword = () => {
         }
     }, [currentPasswordValidate, newPasswordValidate, confirmPasswordValidate, newPassword, confirmPassword]);
 
+    // Use effect for new password eye icon | password hide and show
+    useEffect(() => {
+        currentPasswordEyeValidation()
+        newPasswordEyeValidation()
+        confirmPasswordEyeValidation()
+    }, [])
+
+
+
     const submitForm = (e) => {
         e.preventDefault()
         const passwordCredentials = {
@@ -169,23 +178,27 @@ const ChangePassword = () => {
         <div className="container my-2">
             <h3>Change Password</h3>
             <form onSubmit={submitForm} id="myForm">
-                <div className="mb-3">
-                    <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="currPass" className="form-label">Current Password</label>
-                    <input autoFocus required type="password" className="form-control" id="currPass" placeholder="Enter current password" onChange={(e) => currentPasswordValidation(e)} value={currentPassword} />
+
+                <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="currPass" className="form-label">Current Password</label>
+                <div className="mb-3 input-group">
+                    <input autoFocus required type="password" style={{ borderRight: "0px", borderRadius: "5px" }} className="form-control" id="currPass" placeholder="Enter current password" onChange={(e) => currentPasswordValidation(e)} value={currentPassword} aria-label="Current Password" aria-describedby="currentPasswordEye" />
+                    <span className="input-group-text" id="currentPasswordEye" style={{ backgroundColor: "#ffffff", borderRadius: "5px", borderLeft: "0px" }}><i className="bi bi-eye" id="currentPasswordEyeIcon"></i></span>
                     <div id="currentPasswordMsg"></div>
                 </div>
 
-                <div className="mb-3">
-                    <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="newPass1" className="form-label">New Password</label>
-                    <input required type="password" className="form-control" id="newPass1" placeholder="Enter new password" onChange={(e) => newPasswordValidation(e)} value={newPassword} />
+                <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="newPass1" className="form-label">New Password</label>
+                <div className="mb-3 input-group">
+                    <input required type="password" style={{ borderRight: "0px", borderRadius: "5px" }} className="form-control" id="newPass1" placeholder="Enter new password" onChange={(e) => newPasswordValidation(e)} value={newPassword} aria-label="New Password" aria-describedby="newPasswordEye" />
+                    <span className="input-group-text" id="newPasswordEye" style={{ backgroundColor: "#ffffff", borderRadius: "5px", borderLeft: "0px" }}><i className="bi bi-eye" id="newPasswordEyeIcon"></i></span>
                     <div id="newPasswordMsg"></div>
                 </div>
 
                 <div className="text-center" id="matchPassword" style={{ display: 'block' }}></div>
 
-                <div className="mb-3">
-                    <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="newPass2" className="form-label">Confirm New Password</label>
-                    <input required type="password" className="form-control" id="newPass2" placeholder="Re-type new password" onChange={(e) => confirmPasswordValidation(e)} value={confirmPassword} />
+                <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="newPass2" className="form-label">Confirm New Password</label>
+                <div className="mb-3 input-group">
+                    <input required type="password" style={{ borderRight: "0px", borderRadius: "5px" }} className="form-control" id="newPass2" placeholder="Re-type new password" onChange={(e) => confirmPasswordValidation(e)} value={confirmPassword} aria-label="Confirm New Password" aria-describedby="confirmPasswordEye" />
+                    <span className="input-group-text" id="confirmPasswordEye" style={{ backgroundColor: "#ffffff", borderRadius: "5px", borderLeft: "0px" }}><i className="bi bi-eye" id="confirmPasswordEyeIcon"></i></span>
                     <div id="confirmPasswordMsg"></div>
                 </div>
 

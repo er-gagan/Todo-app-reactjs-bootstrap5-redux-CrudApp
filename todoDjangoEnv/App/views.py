@@ -1,3 +1,5 @@
+from os import stat
+from django.http.response import HttpResponse
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.backends import TokenBackend
 from rest_framework.permissions import IsAuthenticated
@@ -8,10 +10,12 @@ from rest_framework.views import APIView
 from django.core.mail import send_mail
 from rest_framework import status
 from django.db.models import Q
-from .serializers import *
-from .models import *
 import random
 import string
+import uuid
+from .serializers import *
+from .models import *
+from django.views.decorators.csrf import csrf_exempt
 
 # from rest_framework_simplejwt.tokens import RefreshToken  # generate jwt manually
 
@@ -105,17 +109,50 @@ class changePasswordView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+def send_mail_after_registration(name, email, auth_token):
+    subject = 'Your accounts need to be verified'
+    message = f'Hello {name}\n\nYou registered an account on [todoApp], before being able to use your account you need to verify that this is your email address by clicking here: http://localhost:3000/verify/{auth_token}\n\nKind Regards, [todoApp]'
+    recepient = email
+    send_mail(subject, message, EMAIL_HOST_USER,
+              [recepient], fail_silently=False)
+
+
 class UserView(APIView):
     def post(self, request):   # user register
         try:
-            serializer = UserSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            else:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # serializer = UserSerializer(data=request.data)
+            name = request.data['name']
+            username = request.data['username']
+            password = request.data['password']
+            email = request.data['email']
+            phone = request.data['phone']
+            gender = request.data['gender']
+            auth_token = str(uuid.uuid4())
+            user = User.objects.create(
+                name=name, username=username, email=email, phone=phone, gender=gender, auth_token=auth_token)
+            user.set_password(password)
+            user.is_active = False
+            user.save()
+            send_mail_after_registration(name, email, auth_token)
+            return Response(status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({'Exception': str(e)}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+@csrf_exempt
+def VerifyAccount(request, auth_token):
+    try:
+        user = User.objects.get(auth_token=auth_token)
+        if user:
+            if user.is_active:
+                return HttpResponse(status=status.HTTP_208_ALREADY_REPORTED)
+            else:
+                user.is_active = True
+                user.save()
+                return HttpResponse(status=status.HTTP_200_OK)
+        else:
+            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+    except:
+        return HttpResponse(status=status.HTTP_406_NOT_ACCEPTABLE)
 
 
 def emailSend(otp, email):

@@ -113,4 +113,44 @@ const matchPasswordInvalid = (matchPassword, pass1, pass2) => {
     matchPassword.innerText = "** Password doesn't match"
 }
 
-export { checkPassword, checkFieldCharacters, checkLength, undefinedValueLength, InvallidEmailValue, correctCharacters, MainFieldValidationCheck, matchPasswordValid, matchPasswordInvalid }
+const passwordEyeValidation = () => {
+    let passwordState = false
+    let InputPassword = document.getElementById("pass1")
+    let eye = document.getElementById("passwordEye")
+    let eyeIcon = document.getElementById("passwordEyeIcon")
+    eye.style.cursor = "pointer"
+    eye.addEventListener("click", () => {
+        if (passwordState) {
+            InputPassword.setAttribute("type", "password")
+            eyeIcon.classList = "bi bi-eye"
+            passwordState = false
+        }
+        else {
+            InputPassword.setAttribute("type", "text")
+            eyeIcon.classList = "bi bi-eye-fill"
+            passwordState = true
+        }
+    })
+}
+
+const confirmPasswordEyeValidation = () => {
+    let passwordState = false
+    let InputPassword = document.getElementById("pass2")
+    let eye = document.getElementById("confirmPasswordEye")
+    let eyeIcon = document.getElementById("confirmPasswordEyeIcon")
+    eye.style.cursor = "pointer"
+    eye.addEventListener("click", () => {
+        if (passwordState) {
+            InputPassword.setAttribute("type", "password")
+            eyeIcon.classList = "bi bi-eye"
+            passwordState = false
+        }
+        else {
+            InputPassword.setAttribute("type", "text")
+            eyeIcon.classList = "bi bi-eye-fill"
+            passwordState = true
+        }
+    })
+}
+
+export { checkPassword, checkFieldCharacters, checkLength, undefinedValueLength, InvallidEmailValue, correctCharacters, MainFieldValidationCheck, matchPasswordValid, matchPasswordInvalid, passwordEyeValidation, confirmPasswordEyeValidation }

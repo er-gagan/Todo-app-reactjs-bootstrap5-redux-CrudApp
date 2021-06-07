@@ -1,10 +1,10 @@
+import { checkLength, undefinedValueLength, MainFieldValidationCheck, matchPasswordValid, matchPasswordInvalid, newPasswordEyeValidation, confirmPasswordEyeValidation } from './Validation'
 import React, { useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { deleteAllTodos } from '../../reducers/todos'
 import { addToken } from '../../reducers/token'
-import { checkLength, undefinedValueLength, MainFieldValidationCheck, matchPasswordValid, matchPasswordInvalid } from './Validation'
 
 const ForgotPassword = () => {
     const dispatch = useDispatch()
@@ -269,6 +269,11 @@ const ForgotPassword = () => {
         }
     }
 
+    useEffect(() => {
+        newPasswordEyeValidation()
+        confirmPasswordEyeValidation()
+    }, [])
+
     return (
         <div className="container my-2">
             <h3>Forgot Password</h3>
@@ -297,16 +302,24 @@ const ForgotPassword = () => {
             </form>
 
             <form onSubmit={passwordSubmit}>
-                <div className="mb-3">
-                    <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="pass1" className="form-label">Enter new password</label>
-                    <input required type="password" className="form-control" id="pass1" placeholder="Enter new password" onChange={(e) => passwordValidation(e)} value={password} />
+
+                <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="pass1" className="form-label">Enter new password</label>
+                <div className="mb-3 input-group">
+                    <input required type="password" style={{ borderRight: "0px", borderRadius: "5px" }} className="form-control" id="pass1" placeholder="Enter new password" onChange={(e) => passwordValidation(e)} value={password} aria-label="New Password" aria-describedby="newPasswordEye" />
+                    <span className="input-group-text" id="newPasswordEye" style={{ backgroundColor: "#ffffff", borderRadius: "5px", borderLeft: "0px" }}>
+                        <i className="bi bi-eye" id="newPasswordEyeIcon"></i>
+                    </span>
                     <div id="passwordMsg"></div>
                 </div>
 
                 <div className="text-center" id="matchPassword" style={{ display: 'block' }}></div>
-                <div className="mb-3">
-                    <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="pass2" className="form-label">Confirm new password</label>
-                    <input required type="password" className="form-control" id="pass2" placeholder="Re-type password" onChange={(e) => confirmPasswordValidation(e)} value={confirmPassword} />
+
+                <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="pass2" className="form-label">Confirm new password</label>
+                <div className="mb-3 input-group">
+                    <input required type="password" style={{ borderRight: "0px", borderRadius: "5px" }} className="form-control" id="pass2" placeholder="Re-type password" onChange={(e) => confirmPasswordValidation(e)} value={confirmPassword} aria-label="Confirm New Password" aria-describedby="confirmPasswordEye" />
+                    <span className="input-group-text" id="confirmPasswordEye" style={{ backgroundColor: "#ffffff", borderRadius: "5px", borderLeft: "0px" }}>
+                        <i className="bi bi-eye" id="confirmPasswordEyeIcon"></i>
+                    </span>
                     <div id="confirmPasswordMsg"></div>
                 </div>
 
