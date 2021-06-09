@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-// import { getTodos } from "./todosApi";
 
 const initialState = {
     data: [],

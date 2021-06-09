@@ -25,5 +25,11 @@ class OtpVerify(models.Model):
 
     def __str__(self):
         return self.user+self.otp
-        
+
+class socialSignin(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    photoUrl = models.URLField()
+    provider = models.CharField(max_length=20)
+    uid = models.CharField(max_length=200)
+
 # superuser: gagan
