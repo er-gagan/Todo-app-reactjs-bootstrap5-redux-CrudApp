@@ -47,7 +47,7 @@ const Navbar = () => {
                                 <ul className="dropdown-menu dropdown-menu-lg-end dropdown-menu-dark">
                                     {token ?
                                         <div>
-                                            <li><Link className="dropdown-item" to="/">Your Todos</Link></li>
+                                            <li><Link className="dropdown-item" to="/userProfile">Your Profile</Link></li>
                                             <li><Link className="dropdown-item" to="/changePassword">Change Password</Link></li>
                                             <li><Link className="dropdown-item" onClick={() => logOut()} to="/login">Logout</Link></li>
                                         </div>

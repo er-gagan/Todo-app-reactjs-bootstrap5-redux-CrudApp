@@ -5,6 +5,8 @@ import React, { useState, useEffect } from 'react'
 import { addToken } from '../../reducers/token';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
+import { baseUrl } from '../../Environment';
+import LoadingBar from 'react-top-loading-bar'
 
 const Signup = () => {
     const dispatch = useDispatch()
@@ -24,6 +26,9 @@ const Signup = () => {
     const [passwordValidate, setPasswordValidate] = useState(false)
     const [confirmPasswordValidate, setConfirmPasswordValidate] = useState(false)
     const [genderValidate, setGenderValidate] = useState(false)
+
+    // react loading bar state
+    const [progress, setProgress] = useState(0)
 
     const notify = (type, msg, autoClose) => {
         toast(msg, {
@@ -223,6 +228,7 @@ const Signup = () => {
 
     const submitForm = (e) => {
         e.preventDefault()
+        setProgress(10)
         let user = {
             "name": name,
             "username": username,
@@ -231,111 +237,125 @@ const Signup = () => {
             "phone": phone,
             "gender": gender
         }
-
+        setProgress(30)
         try {
-            fetch('http://127.0.0.1:8000/api/register', {
+            fetch(`${baseUrl}api/register`, {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify(user)
             }).then((result) => {
                 if (result.status === 201) {
+                    setProgress(60)
                     history.push('/login')
+                    setProgress(90)
                     notify("success", "You have successfully Signed up, Please check your email, we sent a mail to verify your email and after successfully verified then login.", 7000)
+                    setProgress(100)
                 }
                 else {
+                    setProgress(60)
                     notify("error", "Something went wrong, Please check your internet!", 5000)
+                    setProgress(100)
                 }
             })
         }
         catch {
             logOut()
         }
+        setProgress(100)
     }
 
     return (
-        <div className="container my-2">
-            <h3>Signup Form</h3>
-            <form onSubmit={submitForm}>
-                <div className="row">
-                    <div className="col-md-6">
-                        <div className="mb-3">
-                            <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="name" className="form-label">Name</label>
-                            <input required autoFocus type="text" className="form-control" id="name" placeholder="Please type your name" onChange={(e) => nameValidation(e)} value={name} />
-                            <div id="nameMsg"></div>
+        <>
+            <LoadingBar
+                height={4}
+                color='#f11946'
+                progress={progress}
+                onLoaderFinished={() => setProgress(0)}
+            />
+            <div className="container my-2">
+                <h3>Signup Form</h3>
+                <form onSubmit={submitForm}>
+                    <div className="row">
+                        <div className="col-md-6">
+                            <div className="mb-3">
+                                <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="name" className="form-label">Name</label>
+                                <input required autoFocus type="text" className="form-control" id="name" placeholder="Please type your name" onChange={(e) => nameValidation(e)} value={name} />
+                                <div id="nameMsg"></div>
+                            </div>
                         </div>
+
+                        <div className="col-md-6">
+                            <div className="mb-3">
+                                <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="username" className="form-label">Username</label>
+                                <input required type="text" className="form-control" id="username" placeholder="Please type a username" onChange={(e) => usernameValidation(e)} value={username} />
+                                <div id="usernameMsg"></div>
+                            </div>
+                        </div>
+
+                        <div className="col-md-6">
+                            <div className="mb-3">
+                                <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="phone" className="form-label">Phone</label>
+                                <input required type="text" className="form-control" id="phone" placeholder="Please type your phone number" onChange={(e) => phoneValidation(e)} value={phone} />
+                                <div id="phoneMsg"></div>
+                            </div>
+                        </div>
+
+                        <div className="col-md-6">
+                            <div className="mb-3">
+                                <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="email" className="form-label">Email address</label>
+                                <input required type="email" className="form-control" id="email" placeholder="name@example.com" onChange={(e) => emailValidation(e)} value={email} />
+                                <div id="emailMsg"></div>
+                            </div>
+                        </div>
+
+                        <div className="col-md-6">
+                            <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="pass1" className="form-label">Password</label>
+                            <div className="mb-3 input-group">
+                                <input required type="password" style={{ borderRight: "0px", borderRadius: "5px" }} className="form-control" id="pass1" placeholder="Enter a unique password" onChange={(e) => passwordValidation(e)} value={password} aria-label="Password" aria-describedby="passwordEye" />
+                                <span className="input-group-text" id="passwordEye" style={{ backgroundColor: "#ffffff", borderRadius: "5px", borderLeft: "0px" }}>
+                                    <i className="bi bi-eye" id="passwordEyeIcon"></i>
+                                </span>
+                                <div id="passwordMsg"></div>
+                            </div>
+                        </div>
+
+                        <div className="col-md-6">
+                            <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="pass2" className="form-label">Confirm Password</label>
+                            <div className="mb-3 input-group">
+                                <input required type="password" style={{ borderRight: "0px", borderRadius: "5px" }} className="form-control" id="pass2" placeholder="Re-type password" onChange={(e) => confirmPasswordValidation(e)} value={confirmPassword} aria-label="Confirm Password" aria-describedby="confirmPasswordEye" />
+                                <span className="input-group-text" id="confirmPasswordEye" style={{ backgroundColor: "#ffffff", borderRadius: "5px", borderLeft: "0px" }}>
+                                    <i className="bi bi-eye" id="confirmPasswordEyeIcon"></i>
+                                </span>
+                                <div id="confirmPasswordMsg"></div>
+                            </div>
+                        </div>
+                        <div className="text-center" id="matchPassword" style={{ display: 'block' }}></div>
                     </div>
 
-                    <div className="col-md-6">
-                        <div className="mb-3">
-                            <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="username" className="form-label">Username</label>
-                            <input required type="text" className="form-control" id="username" placeholder="Please type a username" onChange={(e) => usernameValidation(e)} value={username} />
-                            <div id="usernameMsg"></div>
-                        </div>
+                    {/* Gender */}
+                    <div className="mb-3">
+                        <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="Gender" className="form-label">Gender</label>
+                        <select id="Gender" className="form-select" onChange={(e) => genderValidation(e)}>
+                            <option hidden>Please select your gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Others">Others</option>
+                        </select>
+                        <div id="genderMsg"></div>
                     </div>
 
-                    <div className="col-md-6">
-                        <div className="mb-3">
-                            <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="phone" className="form-label">Phone</label>
-                            <input required type="text" className="form-control" id="phone" placeholder="Please type your phone number" onChange={(e) => phoneValidation(e)} value={phone} />
-                            <div id="phoneMsg"></div>
-                        </div>
+                    <div className="text-center">
+                        <input type="submit" value="Signup" id="submitBtn" className="btn btn-danger btn-sm w-25" />
                     </div>
-
-                    <div className="col-md-6">
-                        <div className="mb-3">
-                            <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="email" className="form-label">Email address</label>
-                            <input required type="email" className="form-control" id="email" placeholder="name@example.com" onChange={(e) => emailValidation(e)} value={email} />
-                            <div id="emailMsg"></div>
-                        </div>
-                    </div>
-
-                    <div className="col-md-6">
-                        <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="pass1" className="form-label">Password</label>
-                        <div className="mb-3 input-group">
-                            <input required type="password" style={{ borderRight: "0px", borderRadius: "5px" }} className="form-control" id="pass1" placeholder="Enter a unique password" onChange={(e) => passwordValidation(e)} value={password} aria-label="Password" aria-describedby="passwordEye" />
-                            <span className="input-group-text" id="passwordEye" style={{ backgroundColor: "#ffffff", borderRadius: "5px", borderLeft: "0px" }}>
-                                <i className="bi bi-eye" id="passwordEyeIcon"></i>
-                            </span>
-                            <div id="passwordMsg"></div>
-                        </div>
-                    </div>
-
-                    <div className="col-md-6">
-                        <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="pass2" className="form-label">Confirm Password</label>
-                        <div className="mb-3 input-group">
-                            <input required type="password" style={{ borderRight: "0px", borderRadius: "5px" }} className="form-control" id="pass2" placeholder="Re-type password" onChange={(e) => confirmPasswordValidation(e)} value={confirmPassword} aria-label="Confirm Password" aria-describedby="confirmPasswordEye" />
-                            <span className="input-group-text" id="confirmPasswordEye" style={{ backgroundColor: "#ffffff", borderRadius: "5px", borderLeft: "0px" }}>
-                                <i className="bi bi-eye" id="confirmPasswordEyeIcon"></i>
-                            </span>
-                            <div id="confirmPasswordMsg"></div>
-                        </div>
-                    </div>
-                    <div className="text-center" id="matchPassword" style={{ display: 'block' }}></div>
-                </div>
-
-                {/* Gender */}
-                <div className="mb-3">
-                    <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="Gender" className="form-label">Gender</label>
-                    <select id="Gender" className="form-select" onChange={(e) => genderValidation(e)}>
-                        <option hidden>Please select your gender</option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="Others">Others</option>
-                    </select>
-                    <div id="genderMsg"></div>
-                </div>
-
+                </form>
                 <div className="text-center">
-                    <input type="submit" value="Signup" id="submitBtn" className="btn btn-danger btn-sm w-25" />
+                    <Link to="/login">Already have an account? Sign in</Link>
                 </div>
-            </form>
-            <div className="text-center">
-                <Link to="/login">Already have an account? Sign in</Link>
             </div>
-        </div>
+        </>
     )
 }
 

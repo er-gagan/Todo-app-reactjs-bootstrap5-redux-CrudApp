@@ -5,6 +5,7 @@ import { addToken } from '../../reducers/token'
 import { useHistory } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
+import { baseUrl } from '../../Environment'
 
 const ChangePassword = () => {
     const dispatch = useDispatch()
@@ -152,7 +153,7 @@ const ChangePassword = () => {
             "newPassword": newPassword
         }
         try {
-            fetch('http://127.0.0.1:8000/api/change_password', {
+            fetch(`${baseUrl}api/change_password`, {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",

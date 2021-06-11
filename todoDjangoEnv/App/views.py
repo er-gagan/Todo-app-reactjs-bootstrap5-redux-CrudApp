@@ -16,8 +16,6 @@ import random
 import string
 import uuid
 
-# from rest_framework_simplejwt.tokens import RefreshToken  # generate jwt manually
-
 
 def get_user_info(request):
     token = request.META.get('HTTP_AUTHORIZATION', " ").split(' ')[1]
@@ -88,6 +86,27 @@ class ToDoAppViews(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+class socialSigninView(APIView):
+    def post(self, request):
+        try:
+            username = request.data['username']
+            email = request.data['email']
+            photoUrl = request.data['photoUrl']
+            company = request.data['company']
+            uid = request.data['uid']
+            if User.objects.filter(Q(username=username)&Q(email=email)):
+                return Response(status=status.HTTP_200_OK)
+            else:
+                user = User(username=username, email=email)
+                user.set_password(email)
+                user.save()
+                socialSignin(user=user, photoUrl=photoUrl,
+                        provider=company, uid=uid).save()
+                return Response(status=status.HTTP_200_OK)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
 class changePasswordView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -136,6 +155,7 @@ class UserView(APIView):
             return Response(status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({'Exception': str(e)}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
 
 @csrf_exempt
 def VerifyAccount(request, auth_token):

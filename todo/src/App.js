@@ -11,7 +11,8 @@ import Home from './components/home/Home';
 import NoMatchPage from './NoMatchPage';
 import Protected from './Protected';
 import VerifiedUser from './components/VerifiedUser/VerifiedUser';
-
+import UserProfile from './components/UserProfile/UserProfile';
+// import Loading from './components/Loading';
 function App() {
   return (
     <Router>
@@ -23,6 +24,10 @@ function App() {
         <Route exact path="/changePassword">
           <Protected component={ChangePassword} />
         </Route>
+        <Route exact path="/userProfile">
+          <Protected component={UserProfile} />
+        </Route>
+
         <Route exact path="/login">
           <RESTRICT_AFTER_LOGGED_IN_COMPONENT component={Login} />
         </Route>
@@ -38,6 +43,7 @@ function App() {
         </Route>
         <Route component={NoMatchPage} />
       </Switch>
+      {/* <Loading/> */}
       <ToastContainer />
     </Router>
   );

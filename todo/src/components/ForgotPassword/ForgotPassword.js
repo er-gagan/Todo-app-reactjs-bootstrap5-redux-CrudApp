@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { deleteAllTodos } from '../../reducers/todos'
 import { addToken } from '../../reducers/token'
+import { baseUrl } from '../../Environment'
 
 const ForgotPassword = () => {
     const dispatch = useDispatch()
@@ -192,8 +193,7 @@ const ForgotPassword = () => {
     const emailSubmit = (e) => {
         e.preventDefault()
         try {
-
-            fetch('http://127.0.0.1:8000/api/forgot_password_email_verification', {
+            fetch(`${baseUrl}api/forgot_password_email_verification`, {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -219,7 +219,7 @@ const ForgotPassword = () => {
     const otpSubmit = (e) => {
         e.preventDefault()
         try {
-            fetch('http://127.0.0.1:8000/api/forgot_password_otp_verification', {
+            fetch(`${baseUrl}api/forgot_password_otp_verification`, {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -247,7 +247,7 @@ const ForgotPassword = () => {
     const passwordSubmit = (e) => {
         e.preventDefault()
         try {
-            fetch('http://127.0.0.1:8000/api/forgot_password_with_new_password', {
+            fetch(`${baseUrl}api/forgot_password_with_new_password`, {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",

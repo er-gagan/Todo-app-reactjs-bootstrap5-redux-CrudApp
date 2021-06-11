@@ -6,6 +6,7 @@ import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux'
 import React, { useState } from 'react'
 import cuid from 'cuid'
+import { baseUrl } from '../../Environment.js';
 
 const Form = () => {
     const history = useHistory()
@@ -40,7 +41,7 @@ const Form = () => {
             'Date': String(new Date(dateObj.yyyy, dateObj.mm, dateObj.dd, dateObj.hours, dateObj.minutes, dateObj.seconds))
         }
         try {
-            fetch('http://127.0.0.1:8000/api/todos', {
+            fetch(`${baseUrl}api/todos`, {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",

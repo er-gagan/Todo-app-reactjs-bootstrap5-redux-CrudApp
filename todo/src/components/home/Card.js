@@ -5,6 +5,7 @@ import { addToken } from '../../reducers/token.js';
 import React, { useState, useEffect, useCallback } from 'react'
 import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { baseUrl } from '../../Environment.js';
 
 const Card = () => {
     const history = useHistory()
@@ -31,11 +32,12 @@ const Card = () => {
         dispatch(addToken(null))
         history.push("/login");
         notify("warning", "Something went wrong! Please check your network and re-loggin", 3000)
-    },[dispatch, history])
+    }, [dispatch, history])
 
     useEffect(() => {
         try {
-            fetch('http://127.0.0.1:8000/api/todos', {
+
+            fetch(`${baseUrl}api/todos`, {
                 method: "GET",
                 headers: {
                     "Accept": "application/json",
@@ -73,7 +75,7 @@ const Card = () => {
 
     const deletebtn = (id) => {
         try {
-            fetch('http://127.0.0.1:8000/api/todos', {
+            fetch(`${baseUrl}api/todos`, {
                 method: "DELETE",
                 headers: {
                     "Accept": "application/json",
@@ -109,7 +111,7 @@ const Card = () => {
         }
 
         try {
-            fetch('http://127.0.0.1:8000/api/todos', {
+            fetch(`${baseUrl}api/todos`, {
                 method: "PUT",
                 headers: {
                     "Accept": "application/json",
@@ -132,9 +134,11 @@ const Card = () => {
         }
     }
 
-    const mySortedTodos = todos.slice().sort((a, b) => new Date(b.Date) - new Date(a.Date)) // sort todos date and time wise
+    // sort todos date and time wise
+    const mySortedTodos = todos.slice().sort((a, b) => new Date(b.Date) - new Date(a.Date))
 
-    const filteredCountries = mySortedTodos.filter((todoItem) => {    // search todos title and description wise
+    // search todos title and description wise
+    const filteredCountries = mySortedTodos.filter((todoItem) => {
         return (
             todoItem.Title.toLowerCase().indexOf(searchTodos.toLowerCase()) !== -1 ||
             todoItem.Description.toLowerCase().indexOf(searchTodos.toLowerCase()) !== -1

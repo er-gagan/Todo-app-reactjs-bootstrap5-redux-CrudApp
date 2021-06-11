@@ -2,6 +2,7 @@ import React, { useCallback, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { baseUrl } from '../../Environment'
 import { deleteAllTodos } from '../../reducers/todos'
 import { addToken } from '../../reducers/token'
 
@@ -29,7 +30,7 @@ const VerifiedUser = (props) => {
     useEffect(() => {
         try {
             if (auth_token) {
-                fetch(`http://127.0.0.1:8000/api/verify/${auth_token}`, {
+                fetch(`${baseUrl}api/verify/${auth_token}`, {
                     method: "POST",
                     headers: {
                         "Accept": "application/json",
