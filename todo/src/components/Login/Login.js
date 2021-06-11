@@ -77,13 +77,13 @@ const Login = () => {
 
     const submitForm = (e) => {
         e.preventDefault()
-        // setProgress(10)
+
         let userLogin = {
-            "username": userEmailPhone,
+            "userEmailPhone": userEmailPhone,
             "password": password
         }
         try {
-            fetch(`${baseUrl}api/login`, {
+            fetch(`${baseUrl}api/loginCredentials`, {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -92,25 +92,37 @@ const Login = () => {
                 body: JSON.stringify(userLogin)
             }).then((result) => {
                 if (result.status === 200) {
-                    // setProgress(30)
                     result.json().then((response) => {
-                        // setProgress(60)
-                        let _token = response.access
-                        if (_token) {
-                            // setProgress(80)
-                            localStorage.setItem("token", _token)
-                            dispatch(addToken(_token))
-                            // setProgress(100)
-                            history.push("/");
-                            notify("success", "You have successfully logged in", 5000)
-                        }
-                        else {
-                            logOut()
-                            setUserEmailPhone("")
-                            setPassword("")
-                            document.getElementById("name").focus()
+                        fetch(`${baseUrl}api/login`, {
+                            method: "POST",
+                            headers: {
+                                "Accept": "application/json",
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({ 'username': response.username, 'password': password })
+                        }).then((result) => {
+                            if (result.status === 200) {
+                                result.json().then((response) => {
+                                    let _token = response.access
+                                    if (_token) {
+                                        localStorage.setItem("token", _token)
+                                        dispatch(addToken(_token))
+                                        history.push("/");
+                                        notify("success", "You have successfully logged in", 5000)
+                                    }
+                                    else {
+                                        logOut()
+                                        setUserEmailPhone("")
+                                        setPassword("")
+                                        document.getElementById("name").focus()
 
-                        }
+                                    }
+                                })
+                            }
+                            else {
+                                logOut()
+                            }
+                        })
                     })
                 }
                 else {

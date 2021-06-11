@@ -174,6 +174,20 @@ def VerifyAccount(request, auth_token):
         return HttpResponse(status=status.HTTP_406_NOT_ACCEPTABLE)
 
 
+class loginCredentialsView(APIView):
+    def post(self, request):
+        try:
+            userEmailPhone = request.data['userEmailPhone']
+            password = request.data['password']
+            user = User.objects.get(Q(username=userEmailPhone)|Q(email=userEmailPhone)|Q(phone=userEmailPhone))
+            if user.check_password(password):
+                return Response({'username':user.username}, status=status.HTTP_200_OK)
+            else:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response(status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+
 def emailSend(otp, email):
     subject = 'Welcome to Todo App'
     message = 'OTP = '+str(otp)+"\nThis is a valid otp"

@@ -9,6 +9,7 @@ urlpatterns = [
     path('register', UserView.as_view(), name="register"),
     path('verify/<auth_token>', VerifyAccount, name="VerifyAccount"),
 
+    path('loginCredentials', loginCredentialsView.as_view(), name='loginCredentials'),
     path('login', TokenObtainPairView.as_view(), name='login'),
 
     path('socialSignin', socialSigninView.as_view(), name="socialSignin"),

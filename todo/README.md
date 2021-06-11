@@ -10,6 +10,7 @@ Django | Django Rest Framework
 
 ## Features
 - User signin, signup and signout
+- User signin through username, email or phone
 - Social media signin
     - Signin with google
     - Signin with facebook
@@ -43,4 +44,3 @@ Django | Django Rest Framework
 
 ## Authors
 - [@Software Engineer Gagan Aggarwal](https://github.com/pythoniseasy-hub)
-
