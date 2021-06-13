@@ -16,7 +16,6 @@ import random
 import string
 import uuid
 
-
 def get_user_info(request):
     token = request.META.get('HTTP_AUTHORIZATION', " ").split(' ')[1]
     valid_data = TokenBackend(
@@ -94,14 +93,14 @@ class socialSigninView(APIView):
             photoUrl = request.data['photoUrl']
             company = request.data['company']
             uid = request.data['uid']
-            if User.objects.filter(Q(username=username)&Q(email=email)):
+            if User.objects.filter(Q(username=username) & Q(email=email)):
                 return Response(status=status.HTTP_200_OK)
             else:
                 user = User(username=username, email=email)
                 user.set_password(email)
                 user.save()
                 socialSignin(user=user, photoUrl=photoUrl,
-                        provider=company, uid=uid).save()
+                             provider=company, uid=uid).save()
                 return Response(status=status.HTTP_200_OK)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -138,16 +137,16 @@ def send_mail_after_registration(name, email, auth_token):
 class UserView(APIView):
     def post(self, request):   # user register
         try:
-            # serializer = UserSerializer(data=request.data)
             name = request.data['name']
             username = request.data['username']
             password = request.data['password']
             email = request.data['email']
             phone = request.data['phone']
             gender = request.data['gender']
+            profilePic = request.data['profilePic']
             auth_token = str(uuid.uuid4())
             user = User.objects.create(
-                name=name, username=username, email=email, phone=phone, gender=gender, auth_token=auth_token)
+                name=name, username=username, email=email, phone=phone, gender=gender, auth_token=auth_token, user_pic=profilePic)
             user.set_password(password)
             user.is_active = False
             user.save()
@@ -179,13 +178,24 @@ class loginCredentialsView(APIView):
         try:
             userEmailPhone = request.data['userEmailPhone']
             password = request.data['password']
-            user = User.objects.get(Q(username=userEmailPhone)|Q(email=userEmailPhone)|Q(phone=userEmailPhone))
+            user = User.objects.get(Q(username=userEmailPhone) | Q(
+                email=userEmailPhone) | Q(phone=userEmailPhone))
             if user.check_password(password):
-                return Response({'username':user.username}, status=status.HTTP_200_OK)
+                return Response({'username': user.username}, status=status.HTTP_200_OK)
             else:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
         except:
             return Response(status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+
+class getUserView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = get_user_info(request)
+        serializer = UserSerializer(user)
+        return Response({'data':serializer.data}, status=status.HTTP_200_OK)
 
 
 def emailSend(otp, email):

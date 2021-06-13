@@ -12,6 +12,8 @@ urlpatterns = [
     path('loginCredentials', loginCredentialsView.as_view(), name='loginCredentials'),
     path('login', TokenObtainPairView.as_view(), name='login'),
 
+    path('getUser', getUserView.as_view(), name="getUser"),
+
     path('socialSignin', socialSigninView.as_view(), name="socialSignin"),
 
     path('change_password', changePasswordView.as_view(), name='change_password'),

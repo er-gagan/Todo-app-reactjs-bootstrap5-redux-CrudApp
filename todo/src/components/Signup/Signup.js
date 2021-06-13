@@ -18,6 +18,7 @@ const Signup = () => {
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [gender, setGender] = useState('')
+    const [profilePic, setProfilePic] = useState('')
     // state for submit button validation start
     const [nameValidate, setNameValidate] = useState(false)
     const [usernameValidate, setUsernameValidate] = useState(false)
@@ -26,7 +27,6 @@ const Signup = () => {
     const [passwordValidate, setPasswordValidate] = useState(false)
     const [confirmPasswordValidate, setConfirmPasswordValidate] = useState(false)
     const [genderValidate, setGenderValidate] = useState(false)
-
     // react loading bar state
     const [progress, setProgress] = useState(0)
 
@@ -229,23 +229,21 @@ const Signup = () => {
     const submitForm = (e) => {
         e.preventDefault()
         setProgress(10)
-        let user = {
-            "name": name,
-            "username": username,
-            "password": password,
-            "email": email,
-            "phone": phone,
-            "gender": gender
-        }
+
+        let data = new FormData();
+        data.append("name", name)
+        data.append("username", username)
+        data.append("password", password)
+        data.append("email", email)
+        data.append("phone", phone)
+        data.append("gender", gender)
+        data.append("profilePic", profilePic, profilePic.name)
+        
         setProgress(30)
         try {
             fetch(`${baseUrl}api/register`, {
                 method: "POST",
-                headers: {
-                    "Accept": "application/json",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(user)
+                body: data
             }).then((result) => {
                 if (result.status === 201) {
                     setProgress(60)
@@ -263,8 +261,8 @@ const Signup = () => {
         }
         catch {
             logOut()
+            setProgress(100)
         }
-        setProgress(100)
     }
 
     return (
@@ -333,18 +331,27 @@ const Signup = () => {
                             </div>
                         </div>
                         <div className="text-center" id="matchPassword" style={{ display: 'block' }}></div>
-                    </div>
 
-                    {/* Gender */}
-                    <div className="mb-3">
-                        <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="Gender" className="form-label">Gender</label>
-                        <select id="Gender" className="form-select" onChange={(e) => genderValidation(e)}>
-                            <option hidden>Please select your gender</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Others">Others</option>
-                        </select>
-                        <div id="genderMsg"></div>
+                        {/* Gender */}
+                        <div className="col-md-6">
+                            <div className="mb-3">
+                                <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="Gender" className="form-label">Gender</label>
+                                <select id="Gender" className="form-select" onChange={(e) => genderValidation(e)}>
+                                    <option hidden>Please select your gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Others">Others</option>
+                                </select>
+                                <div id="genderMsg"></div>
+                            </div>
+                        </div>
+
+                        <div className="col-md-6">
+                            <div className="mb-3">
+                                <label htmlFor="formFile" className="form-label">Upload profile pic</label>
+                                <input className="form-control" type="file" id="formFile" accept="image/*" onChange={(e) => setProfilePic(e.target.files[0])} />
+                            </div>
+                        </div>
                     </div>
 
                     <div className="text-center">
