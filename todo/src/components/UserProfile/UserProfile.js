@@ -1,12 +1,13 @@
+import { checkFieldCharacters, undefinedValueLength, checkLength, MainFieldValidationCheck, InvallidEmailValue } from './Validation';
 import React, { useCallback, useEffect, useState } from 'react';
+import 'react-confirm-alert/src/react-confirm-alert.css';
 import { deleteAllTodos } from '../../reducers/todos';
+import { confirmAlert } from 'react-confirm-alert';
 import { addToken } from '../../reducers/token';
 import { useHistory } from 'react-router-dom';
 import { baseUrl } from '../../Environment';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
-import { confirmAlert } from 'react-confirm-alert';
-import 'react-confirm-alert/src/react-confirm-alert.css';
 
 const UserProfile = () => {
     const dispatch = useDispatch()
@@ -18,6 +19,11 @@ const UserProfile = () => {
     const [gender, setGender] = useState('')
     const [profilePic, setProfilePic] = useState('')
     const [newProfilePic, setNewProfilePic] = useState('')
+    // state for submit button validation start
+    const [nameValidate, setNameValidate] = useState(true)
+    const [usernameValidate, setUsernameValidate] = useState(true)
+    const [phoneValidate, setPhoneValidate] = useState(true)
+    const [emailValidate, setEmailValidate] = useState(true)
 
     const notify = (type, msg, autoClose) => {
         toast(msg, {
@@ -34,6 +40,101 @@ const UserProfile = () => {
         dispatch(addToken(null))
         notify("warning", "Something went wrong, Please check your internet and information!", 4000)
     }, [dispatch])
+
+    const nameValidation = (e) => {
+        let Value = e.target.value
+        setName(Value)
+        let regex = /[a-zA-Z ]/gi
+        let nameMsg = document.getElementById("nameMsg")
+        Value = checkFieldCharacters(Value, regex)
+        if (Value !== undefined) {
+            setName(Value)
+            if (checkLength(Value, 5, 30, e, nameMsg)) {   // Value, MinValue, MaxValue, event, nameMsg
+                setNameValidate(true)
+            }
+            else {
+                setNameValidate(false)
+            }
+        }
+        else {
+            undefinedValueLength(e, nameMsg)
+        }
+    }
+
+    const usernameValidation = (e) => {
+        let Value = e.target.value
+        setUsername(Value)
+        let regex = /^(?=.*[0-9])[a-zA-Z0-9!@#$%^&*]{5,15}$/
+        let usernameMsg = document.getElementById("usernameMsg")
+        if (Value) {
+            if (Value.match(regex) !== null) {
+                setUsername(Value)
+                if (checkLength(Value, 5, 15, e, usernameMsg)) {   // Value, MinValue, MaxValue, event, usernameMsg
+                    setUsernameValidate(true)
+                }
+                else {
+                    setUsernameValidate(false)
+                }
+            }
+            else {
+                setUsername(Value)
+                let msg = "** Username Incorrect"
+                MainFieldValidationCheck(e, usernameMsg, msg)
+                setUsernameValidate(false)
+            }
+        }
+        else {
+            undefinedValueLength(e, usernameMsg)
+        }
+    }
+
+    const emailValidation = (e) => {
+        let Value = e.target.value
+        setEmail(Value)
+        let regex = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/gi
+        let emailMsg = document.getElementById("emailMsg")
+        if (Value) {
+            if (Value.match(regex) !== null) {
+                Value = Value.match(regex).join("")
+                setEmail(Value)
+                if (checkLength(Value, 10, 40, e, emailMsg)) {
+                    setEmailValidate(true)
+                }
+                else {
+                    setEmailValidate(false)
+                }
+            }
+            else {
+                setEmail(Value)
+                InvallidEmailValue(e, emailMsg)
+                setEmailValidate(false)
+            }
+        }
+        else {
+            undefinedValueLength(e, emailMsg)
+        }
+    }
+
+    const phoneValidation = (e) => {
+        let Value = e.target.value
+        setPhone(Value)
+        let regex = /[0-9]/gi
+        let phoneMsg = document.getElementById("phoneMsg")
+        Value = checkFieldCharacters(Value, regex)
+        if (Value !== undefined) {
+            setPhone(Value)
+            if (checkLength(Value, 10, 10, e, phoneMsg)) {   // Value, MinValue, MaxValue, event, phoneMsg
+                setPhoneValidate(true)
+            }
+            else {
+                setPhoneValidate(false)
+            }
+        }
+        else {
+            undefinedValueLength(e, phoneMsg)
+        }
+    }
+
 
     useEffect(() => {
         try {
@@ -153,11 +254,25 @@ const UserProfile = () => {
         }
     }
     useEffect(() => {
-        if(profilePic.includes("/media/https%3A/")){
-            let newprofilePic = profilePic.replace("/media/https%3A/","https://")
+        if (profilePic.includes("/media/https%3A/")) {
+            let newprofilePic = profilePic.replace("/media/https%3A/", "https://")
             setProfilePic(newprofilePic)
         }
     }, [profilePic]);
+
+    useEffect(() => {
+        let submitBtn = document.getElementById("submitBtn")
+        let deleteBtn = document.getElementById("deleteBtn")
+        if (nameValidate && usernameValidate && phoneValidate && emailValidate) {
+            submitBtn.disabled = false
+            deleteBtn.disabled = false
+        }
+        else {
+            submitBtn.disabled = true
+            deleteBtn.disabled = true
+        }
+    }, [nameValidate, usernameValidate, phoneValidate, emailValidate]);
+
     return (
         <div className="container my-2">
             <h3>Your Information</h3>
@@ -167,32 +282,32 @@ const UserProfile = () => {
                     <div className="col-md-6">
                         <div className="mb-3">
                             <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="name" className="form-label">Name</label>
-                            <input required type="text" className="form-control" id="name" placeholder="Please type your name" onChange={(e) => setName(e.target.value)} value={name} />
-                            {/* <div id="nameMsg"></div> */}
+                            <input required type="text" className="form-control" id="name" placeholder="Please type your name" onChange={(e) => nameValidation(e)} value={name} />
+                            <div id="nameMsg"></div>
                         </div>
                     </div>
 
                     <div className="col-md-6">
                         <div className="mb-3">
                             <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="username" className="form-label">Username</label>
-                            <input required type="text" className="form-control" id="username" placeholder="Please type a username" onChange={(e) => setUsername(e.target.value)} value={username} />
-                            {/* <div id="usernameMsg"></div> */}
+                            <input required type="text" className="form-control" id="username" placeholder="Please type a username" onChange={(e) => usernameValidation(e)} value={username} />
+                            <div id="usernameMsg"></div>
                         </div>
                     </div>
 
                     <div className="col-md-6">
                         <div className="mb-3">
                             <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="phone" className="form-label">Phone</label>
-                            <input required type="text" className="form-control" id="phone" placeholder="Please type your phone number" onChange={(e) => setPhone(e.target.value)} value={phone} />
-                            {/* <div id="phoneMsg"></div> */}
+                            <input required type="text" className="form-control" id="phone" placeholder="Please type your phone number" onChange={(e) => phoneValidation(e)} value={phone} />
+                            <div id="phoneMsg"></div>
                         </div>
                     </div>
 
                     <div className="col-md-6">
                         <div className="mb-3">
                             <span style={{ color: "red", fontWeight: "bolder" }}>*</span>&nbsp;<label htmlFor="email" className="form-label">Email address</label>
-                            <input required type="email" className="form-control" id="email" placeholder="name@example.com" onChange={(e) => setEmail(e.target.value)} value={email} />
-                            {/* <div id="emailMsg"></div> */}
+                            <input required type="email" className="form-control" id="email" placeholder="name@example.com" onChange={(e) => emailValidation(e)} value={email} />
+                            <div id="emailMsg"></div>
                         </div>
                     </div>
 
