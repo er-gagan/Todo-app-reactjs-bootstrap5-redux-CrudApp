@@ -8,13 +8,19 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
 from django.core.mail import send_mail
+from django.shortcuts import render
 from rest_framework import status
 from django.db.models import Q
 from .serializers import *
+from pathlib import Path
 from .models import *
 import random
 import string
 import uuid
+import os
+
+def test(request):
+    return render(request,"test.html")
 
 def get_user_info(request):
     token = request.META.get('HTTP_AUTHORIZATION', " ").split(' ')[1]
@@ -96,11 +102,10 @@ class socialSigninView(APIView):
             if User.objects.filter(Q(username=username) & Q(email=email)):
                 return Response(status=status.HTTP_200_OK)
             else:
-                user = User(username=username, email=email)
+                user = User(username=username, email=email, user_pic=photoUrl)
                 user.set_password(email)
                 user.save()
-                socialSignin(user=user, photoUrl=photoUrl,
-                             provider=company, uid=uid).save()
+                socialSignin(user=user, provider=company, uid=uid).save()
                 return Response(status=status.HTTP_200_OK)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -193,9 +198,52 @@ class getUserView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        user = get_user_info(request)
-        serializer = UserSerializer(user)
-        return Response({'data':serializer.data}, status=status.HTTP_200_OK)
+        try:
+            user = get_user_info(request)
+            serializer = UserSerializer(user)
+            return Response({'data': serializer.data}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'Exception': e}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class deleteUserView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            user = get_user_info(request)
+            user.delete()
+            return Response(status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'Exception': e}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class updateUserView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        try:
+            user = get_user_info(request)
+            user.name = request.data['name']
+            user.username = request.data['username']
+            user.email = request.data['email']
+            user.phone = request.data['phone']
+            user.gender = request.data['gender']
+            profilePic = request.data['profilePic']
+            if(str(user.user_pic) == str(profilePic)):
+                pass
+            else:
+                BASE_DIR = Path(__file__).resolve().parent.parent
+                mypath = f"{BASE_DIR}\\media\\{user.user_pic}"
+                os.remove(mypath)
+                user.user_pic = profilePic
+            user.save()
+            serializer = UserSerializer(user)
+            return Response({'data': serializer.data}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'Exception': e}, status=status.HTTP_400_BAD_REQUEST)
 
 
 def emailSend(otp, email):

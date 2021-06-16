@@ -30,7 +30,8 @@ Django | Django Rest Framework
 - [cuid](https://www.npmjs.com/package/cuid) :For unique id generator
 - [firebase](https://www.npmjs.com/package/firebase) :For social media signin
 - [react-router-dom](https://reactrouter.com/web/guides/quick-start) :For url mapping in react
-- [react-toastify](https://www.npmjs.com/package/react-toastify) : For notification
+- [react-toastify](https://www.npmjs.com/package/react-toastify) :For notification
+- [react-confirm-alert](https://www.npmjs.com/package/react-confirm-alert) :For confirm dialog
 
 # Packages used for react-native
 - comming soon

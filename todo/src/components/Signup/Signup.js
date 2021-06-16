@@ -1,12 +1,20 @@
-import { checkPassword, checkFieldCharacters, checkLength, undefinedValueLength, InvallidEmailValue, correctCharacters, MainFieldValidationCheck, matchPasswordValid, matchPasswordInvalid, passwordEyeValidation, confirmPasswordEyeValidation } from './SignupFormValidation'
+import { checkPassword, checkFieldCharacters, checkLength, undefinedValueLength, InvallidEmailValue, correctCharacters, MainFieldValidationCheck, matchPasswordValid, matchPasswordInvalid, passwordEyeValidation, confirmPasswordEyeValidation } from './SignupFormValidation';
 import { deleteAllTodos } from '../../reducers/todos';
 import { Link, useHistory } from "react-router-dom";
+import SyncLoader from 'react-spinners/SyncLoader';
 import React, { useState, useEffect } from 'react'
 import { addToken } from '../../reducers/token';
+import { baseUrl } from '../../Environment';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
-import { baseUrl } from '../../Environment';
-import LoadingBar from 'react-top-loading-bar'
+import { css } from "@emotion/react";
+
+const override = css`
+    display: block;
+    margin: 200px 47%;
+    position: fixed;
+    z-index:1;
+`;
 
 const Signup = () => {
     const dispatch = useDispatch()
@@ -27,8 +35,8 @@ const Signup = () => {
     const [passwordValidate, setPasswordValidate] = useState(false)
     const [confirmPasswordValidate, setConfirmPasswordValidate] = useState(false)
     const [genderValidate, setGenderValidate] = useState(false)
-    // react loading bar state
-    const [progress, setProgress] = useState(0)
+    // react loading state
+    let [loading, setLoading] = useState(false);
 
     const notify = (type, msg, autoClose) => {
         toast(msg, {
@@ -228,8 +236,7 @@ const Signup = () => {
 
     const submitForm = (e) => {
         e.preventDefault()
-        setProgress(10)
-
+        setLoading(true)
         let data = new FormData();
         data.append("name", name)
         data.append("username", username)
@@ -238,41 +245,36 @@ const Signup = () => {
         data.append("phone", phone)
         data.append("gender", gender)
         data.append("profilePic", profilePic, profilePic.name)
-        
-        setProgress(30)
+
+
         try {
             fetch(`${baseUrl}api/register`, {
                 method: "POST",
                 body: data
             }).then((result) => {
                 if (result.status === 201) {
-                    setProgress(60)
+
                     history.push('/login')
-                    setProgress(90)
+
                     notify("success", "You have successfully Signed up, Please check your email, we sent a mail to verify your email and after successfully verified then login.", 7000)
-                    setProgress(100)
                 }
                 else {
-                    setProgress(60)
+
                     notify("error", "Something went wrong, Please check your internet!", 5000)
-                    setProgress(100)
+
                 }
+                setLoading(false)
             })
         }
         catch {
             logOut()
-            setProgress(100)
+            setLoading(false)
         }
     }
 
     return (
         <>
-            <LoadingBar
-                height={4}
-                color='#f11946'
-                progress={progress}
-                onLoaderFinished={() => setProgress(0)}
-            />
+        <SyncLoader color={"#292929"} loading={loading} css={override} size={20} />
             <div className="container my-2">
                 <h3>Signup Form</h3>
                 <form onSubmit={submitForm}>
@@ -347,9 +349,13 @@ const Signup = () => {
                         </div>
 
                         <div className="col-md-6">
-                            <div className="mb-3">
-                                <label htmlFor="formFile" className="form-label">Upload profile pic</label>
+                            <label htmlFor="formFile" className="form-label">Upload profile pic</label>
+                            <div className="mb-3 input-group">
                                 <input className="form-control" type="file" id="formFile" accept="image/*" onChange={(e) => setProfilePic(e.target.files[0])} />
+                                {profilePic ?
+                                    <img src={URL.createObjectURL(profilePic)} width="8%" className="input-group-text" alt="No Img" />
+                                    : <></>
+                                }
                             </div>
                         </div>
                     </div>

@@ -25,12 +25,13 @@ Django | Django Rest Framework
 - jwt authentication
 
 # Packages used for react js
-- [react-top-loading-bar](https://www.npmjs.com/package/react-top-loading-bar) :Show progress bar on top of window
+- [react-spinners](https://www.npmjs.com/package/react-spinners) :Show loading spinner during processing data
 - [Redux Toolkit](https://redux-toolkit.js.org/introduction/getting-started) :For redux usage
 - [cuid](https://www.npmjs.com/package/cuid) :For unique id generator
 - [firebase](https://www.npmjs.com/package/firebase) :For social media signin
 - [react-router-dom](https://reactrouter.com/web/guides/quick-start) :For url mapping in react
-- [react-toastify](https://www.npmjs.com/package/react-toastify) : For notification
+- [react-toastify](https://www.npmjs.com/package/react-toastify) :For notification
+- [react-confirm-alert](https://www.npmjs.com/package/react-confirm-alert) :For confirm dialog
 
 # Packages used for react-native
 - comming soon

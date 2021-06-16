@@ -3,6 +3,7 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
+    path('test',test),
     path('', ApiRoot.as_view(), name='root'),
     path('todos', ToDoAppViews.as_view(), name="todos"),
 
@@ -13,6 +14,8 @@ urlpatterns = [
     path('login', TokenObtainPairView.as_view(), name='login'),
 
     path('getUser', getUserView.as_view(), name="getUser"),
+    path('deleteUser', deleteUserView.as_view(), name="deleteUser"),
+    path('updateUser', updateUserView.as_view(), name="updateUser"),
 
     path('socialSignin', socialSigninView.as_view(), name="socialSignin"),
 

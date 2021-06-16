@@ -7,13 +7,19 @@ class User(AbstractUser):
     first_name = last_name = None   # delete fields
     name = models.CharField(max_length=100)
     email = models.EmailField(blank=False, null=False, unique=True)
-    phone = models.CharField(max_length=15, blank=False, unique=True, null=False)
+    phone = models.CharField(
+        max_length=15, blank=False, unique=True, null=False)
     gender = models.CharField(max_length=10)
     auth_token = models.CharField(max_length=100)
-    user_pic = models.ImageField(upload_to="userPics", default="userPics/blankUserProfile.png", null=True)
+    user_pic = models.ImageField(
+        upload_to="userPics", default="userPics/blankUserProfile.png", null=True)
 
     def __str__(self):
         return self.username
+
+    def delete(self, *args, **kwargs):
+        self.user_pic.delete()  # delete file permanently
+        super().delete(*args, **kwargs)
 
 
 class Todos(models.Model):
@@ -37,7 +43,6 @@ class OtpVerify(models.Model):
 
 class socialSignin(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    photoUrl = models.URLField()
     provider = models.CharField(max_length=20)
     uid = models.CharField(max_length=200)
 
