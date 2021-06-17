@@ -33,9 +33,6 @@ Django | Django Rest Framework
 - [react-toastify](https://www.npmjs.com/package/react-toastify) :For notification
 - [react-confirm-alert](https://www.npmjs.com/package/react-confirm-alert) :For confirm dialog
 
-# Packages used for react-native
-- comming soon
-
 # Packages used for django
 - [Django](https://www.djangoproject.com/) :Version 3.2.3
 - [django-cors-headers](https://pypi.org/project/django-cors-headers/) :For avoiding cors error
