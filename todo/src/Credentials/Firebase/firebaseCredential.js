@@ -1,5 +1,5 @@
 import firebase from "firebase";
-import { apiKey, appId, authDomain, databaseURL, measurementId, messagingSenderId, projectId, storageBucket } from "../../Environment";
+import { apiKey, appId, authDomain, databaseURL, messagingSenderId, projectId, storageBucket } from "../../Environment";
 
 firebase.initializeApp({
     apiKey: apiKey,
@@ -9,7 +9,7 @@ firebase.initializeApp({
     storageBucket: storageBucket,
     messagingSenderId: messagingSenderId,
     appId: appId,
-    measurementId: measurementId
+    // measurementId: measurementId
 }); 
 
 export default firebase

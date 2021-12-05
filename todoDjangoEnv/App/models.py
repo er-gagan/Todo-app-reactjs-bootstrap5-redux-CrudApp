@@ -8,7 +8,7 @@ class User(AbstractUser):
     name = models.CharField(max_length=100)
     email = models.EmailField(blank=False, null=False, unique=True)
     phone = models.CharField(
-        max_length=15, blank=False, unique=True, null=False)
+        max_length=15, blank=True, null=True)
     gender = models.CharField(max_length=10)
     auth_token = models.CharField(max_length=100)
     user_pic = models.ImageField(

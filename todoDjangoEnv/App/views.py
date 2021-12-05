@@ -107,7 +107,8 @@ class socialSigninView(APIView):
                 user.save()
                 socialSignin(user=user, provider=company, uid=uid).save()
                 return Response(status=status.HTTP_200_OK)
-        except:
+        except Exception as e:
+            print("ee", e)
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
