@@ -1,6 +1,6 @@
 # created by virtualenv automatically
 /Lib
-/Scripts
+/myenv
 /pyvenv.cfg
 /.vscode
 /.env

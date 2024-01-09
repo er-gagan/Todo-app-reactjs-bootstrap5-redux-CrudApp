@@ -47,7 +47,7 @@ const Card = () => {
             }).then((result) => {
                 if (result.status === 200) {
                     result.json().then((response) => {
-                        response.map(todo => {
+                        response.data.map(todo => {
                             dispatch(addTodo(todo))
                             return true
                         })

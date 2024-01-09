@@ -17,10 +17,13 @@ from .models import *
 import random
 import string
 import uuid
+
 import os
 
+
 def test(request):
-    return render(request,"test.html")
+    return render(request, "test.html")
+
 
 def get_user_info(request):
     token = request.META.get('HTTP_AUTHORIZATION', " ").split(' ')[1]
@@ -42,9 +45,23 @@ class ToDoAppViews(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
-        user = get_user_info(request)
-        serializer = get_todos(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        try:
+            user = get_user_info(request)
+            serializer = get_todos(user)
+            response_data = {
+                "status": "success",
+                "status_code": status.HTTP_200_OK,
+                "message": "Data fatched successfully!",
+                "data": serializer.data
+            }
+            return Response(data=response_data, status=status.HTTP_200_OK)
+        except Exception as e:
+            response_data = {
+                "status": "failed",
+                "status_code": status.HTTP_406_NOT_ACCEPTABLE,
+                "message": str(e),
+            }
+            return Response(data=response_data, status=status.HTTP_406_NOT_ACCEPTABLE)
 
     def post(self, request, format=None):
         try:
@@ -55,9 +72,19 @@ class ToDoAppViews(APIView):
             Date = request.data['Date']
             Todos(user=user, id=id, Title=Title,
                   Description=Description, Date=Date).save()
-            return Response(status=status.HTTP_200_OK)
-        except:
-            return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
+            response_data = {
+                "status": "success",
+                "status_code": status.HTTP_200_OK,
+                "message": "todo created successfully",
+            }
+            return Response(data=response_data, status=status.HTTP_200_OK)
+        except Exception as e:
+            response_data = {
+                "status": "failed",
+                "status_code": status.HTTP_406_NOT_ACCEPTABLE,
+                "message": str(e),
+            }
+            return Response(data=response_data, status=status.HTTP_406_NOT_ACCEPTABLE)
 
     def put(self, request, format=None):
         try:
@@ -68,13 +95,27 @@ class ToDoAppViews(APIView):
             Date = request.data['Date']
             todo = Todos.objects.filter(Q(id=id) & Q(user=user))
             if todo:
-                todo.update(
-                    Title=Title, Description=Description, Date=Date)
-                return Response(status=status.HTTP_200_OK)
+                todo.update(Title=Title, Description=Description, Date=Date)
+                response_data = {
+                    "status": "success",
+                    "status_code": status.HTTP_200_OK,
+                    "message": "todo updated successfully",
+                }
+                return Response(data=response_data, status=status.HTTP_200_OK)
             else:
-                return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
-        except:
-            return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
+                response_data = {
+                    "status": "failed",
+                    "status_code": status.HTTP_406_NOT_ACCEPTABLE,
+                    "message": "This todo isn't exist in database",
+                }
+                return Response(data=response_data, status=status.HTTP_406_NOT_ACCEPTABLE)
+        except Exception as e:
+            response_data = {
+                "status": "failed",
+                "status_code": status.HTTP_406_NOT_ACCEPTABLE,
+                "message": str(e),
+            }
+            return Response(data=response_data, status=status.HTTP_406_NOT_ACCEPTABLE)
 
     def delete(self, request, format=None):
         try:
@@ -84,11 +125,26 @@ class ToDoAppViews(APIView):
             if todo:
                 todo.delete()
                 # serializer = get_todos(user)
-                return Response(status=status.HTTP_200_OK)
+                response_data = {
+                    "status": "success",
+                    "status_code": status.HTTP_200_OK,
+                    "message": "todo deleted successfully",
+                }
+                return Response(data=response_data, status=status.HTTP_200_OK)
             else:
-                return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
-        except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+                response_data = {
+                    "status": "failed",
+                    "status_code": status.HTTP_406_NOT_ACCEPTABLE,
+                    "message": "todo isn't exist in database",
+                }
+                return Response(data=response_data, status=status.HTTP_406_NOT_ACCEPTABLE)
+        except Exception as e:
+            response_data = {
+                "status": "failed",
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "message": str(e),
+            }
+            return Response(data=response_data, status=status.HTTP_400_BAD_REQUEST)
 
 
 class socialSigninView(APIView):
@@ -100,16 +156,30 @@ class socialSigninView(APIView):
             company = request.data['company']
             uid = request.data['uid']
             if User.objects.filter(Q(username=username) & Q(email=email)):
-                return Response(status=status.HTTP_200_OK)
+                response_data = {
+                    "status": "success",
+                    "status_code": status.HTTP_200_OK,
+                    "message": "user already exist.",
+                }
+                return Response(data=response_data, status=status.HTTP_200_OK)
             else:
                 user = User(username=username, email=email, user_pic=photoUrl)
                 user.set_password(email)
                 user.save()
                 socialSignin(user=user, provider=company, uid=uid).save()
-                return Response(status=status.HTTP_200_OK)
+                response_data = {
+                    "status": "success",
+                    "status_code": status.HTTP_200_OK,
+                    "message": "user created successfully",
+                }
+                return Response(data=response_data, status=status.HTTP_200_OK)
         except Exception as e:
-            print("ee", e)
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            response_data = {
+                "status": "failed",
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "message": str(e),
+            }
+            return Response(data=response_data, status=status.HTTP_400_BAD_REQUEST)
 
 
 class changePasswordView(APIView):
@@ -125,19 +195,34 @@ class changePasswordView(APIView):
             if password:
                 user.set_password(newPassword)
                 user.save()
-                return Response(status=status.HTTP_202_ACCEPTED)
+                response_data = {
+                    "status": "success",
+                    "status_code": status.HTTP_202_ACCEPTED,
+                    "message": "password has successfully changed",
+                }
+                return Response(data=response_data, status=status.HTTP_202_ACCEPTED)
             else:
-                return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
-        except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+                response_data = {
+                    "status": "failed",
+                    "status_code": status.HTTP_406_NOT_ACCEPTABLE,
+                    "message": "wrong password.",
+                }
+                return Response(data=response_data, status=status.HTTP_406_NOT_ACCEPTABLE)
+        except Exception as e:
+            response_data = {
+                "status": "failed",
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "message": str(e),
+            }
+            return Response(data=response_data, status=status.HTTP_400_BAD_REQUEST)
 
 
 def send_mail_after_registration(name, email, auth_token):
     subject = 'Your accounts need to be verified'
     message = f'Hello {name}\n\nYou registered an account on [todoApp], before being able to use your account you need to verify that this is your email address by clicking here: http://localhost:3000/verify/{auth_token}\n\nKind Regards, [todoApp]'
-    recepient = email
+    recipient = email
     send_mail(subject, message, EMAIL_HOST_USER,
-              [recepient], fail_silently=False)
+              [recipient], fail_silently=False)
 
 
 class UserView(APIView):
@@ -157,9 +242,19 @@ class UserView(APIView):
             user.is_active = False
             user.save()
             send_mail_after_registration(name, email, auth_token)
-            return Response(status=status.HTTP_201_CREATED)
+            response_data = {
+                "status": "success",
+                "status_code": status.HTTP_201_CREATED,
+                "message": "user is registered successfully, we sent a mail to user given mail id for email verification and account activation.",
+            }
+            return Response(data=response_data, status=status.HTTP_201_CREATED)
         except Exception as e:
-            return Response({'Exception': str(e)}, status=status.HTTP_406_NOT_ACCEPTABLE)
+            response_data = {
+                "status": "failed",
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "message": str(e),
+            }
+            return Response(data=response_data, status=status.HTTP_400_BAD_REQUEST)
 
 
 @csrf_exempt
@@ -233,12 +328,12 @@ class updateUserView(APIView):
             user.phone = request.data['phone']
             user.gender = request.data['gender']
             profilePic = request.data['profilePic']
-            if(str(user.user_pic) == str(profilePic)):
+            if (str(user.user_pic) == str(profilePic)):
                 pass
             else:
                 BASE_DIR = Path(__file__).resolve().parent.parent
-                mypath = f"{BASE_DIR}\\media\\{user.user_pic}"
-                os.remove(mypath)
+                my_path = f"{BASE_DIR}\\media\\{user.user_pic}"
+                os.remove(my_path)
                 user.user_pic = profilePic
             user.save()
             serializer = UserSerializer(user)
@@ -250,9 +345,9 @@ class updateUserView(APIView):
 def emailSend(otp, email):
     subject = 'Welcome to Todo App'
     message = 'OTP = '+str(otp)+"\nThis is a valid otp"
-    recepient = email
+    recipient = email
     send_mail(subject, message, EMAIL_HOST_USER,
-              [recepient], fail_silently=False)
+              [recipient], fail_silently=False)
 
 
 class forgot_password_email_verification_View(APIView):

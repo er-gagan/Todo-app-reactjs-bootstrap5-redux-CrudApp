@@ -3,9 +3,9 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import ChangePassword from './components/ChangePassword/ChangePassword';
 import ForgotPassword from './components/ForgotPassword/ForgotPassword';
 import Signup from './components/Signup/Signup';
-import Navbar from './components/Navbar/Navbar';
+import Navbar from './components/navbar/Navbar';
 import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+
 import Login from './components/Login/Login';
 import Home from './components/home/Home';
 import NoMatchPage from './NoMatchPage';
@@ -43,7 +43,9 @@ function App() {
         </Route>
         <Route component={NoMatchPage} />
       </Switch>
-      <ToastContainer />
+      <ToastContainer
+
+      />
     </Router>
   );
 }
